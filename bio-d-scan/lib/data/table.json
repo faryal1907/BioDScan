@@ -1,0 +1,1002 @@
+[
+    {
+        "Date": "2023-01-01",
+        "Time": "07:23",
+        "Bumble Bee": 12,
+        "Honey Bee": 44,
+        "Lady Bug": 3,
+        "Total Count": 59,
+        "Temperature (C)": 23,
+        "Humidity (%)": 57
+    },
+    {
+        "Date": "2023-01-02",
+        "Time": "13:05",
+        "Bumble Bee": 9,
+        "Honey Bee": 37,
+        "Lady Bug": 5,
+        "Total Count": 51,
+        "Temperature (C)": 25,
+        "Humidity (%)": 62
+    },
+    {
+        "Date": "2023-01-03",
+        "Time": "09:14",
+        "Bumble Bee": 15,
+        "Honey Bee": 58,
+        "Lady Bug": 1,
+        "Total Count": 74,
+        "Temperature (C)": 22,
+        "Humidity (%)": 65
+    },
+    {
+        "Date": "2023-01-04",
+        "Time": "15:48",
+        "Bumble Bee": 6,
+        "Honey Bee": 92,
+        "Lady Bug": 2,
+        "Total Count": 100,
+        "Temperature (C)": 27,
+        "Humidity (%)": 70
+    },
+    {
+        "Date": "2023-01-05",
+        "Time": "06:59",
+        "Bumble Bee": 11,
+        "Honey Bee": 31,
+        "Lady Bug": 0,
+        "Total Count": 42,
+        "Temperature (C)": 19,
+        "Humidity (%)": 50
+    },
+    {
+        "Date": "2023-01-06",
+        "Time": "10:36",
+        "Bumble Bee": 4,
+        "Honey Bee": 64,
+        "Lady Bug": 6,
+        "Total Count": 74,
+        "Temperature (C)": 21,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-01-07",
+        "Time": "14:25",
+        "Bumble Bee": 17,
+        "Honey Bee": 79,
+        "Lady Bug": 3,
+        "Total Count": 99,
+        "Temperature (C)": 26,
+        "Humidity (%)": 73
+    },
+    {
+        "Date": "2023-01-08",
+        "Time": "08:45",
+        "Bumble Bee": 2,
+        "Honey Bee": 40,
+        "Lady Bug": 4,
+        "Total Count": 46,
+        "Temperature (C)": 18,
+        "Humidity (%)": 48
+    },
+    {
+        "Date": "2023-01-09",
+        "Time": "17:10",
+        "Bumble Bee": 10,
+        "Honey Bee": 33,
+        "Lady Bug": 7,
+        "Total Count": 50,
+        "Temperature (C)": 24,
+        "Humidity (%)": 60
+    },
+    {
+        "Date": "2023-01-10",
+        "Time": "11:19",
+        "Bumble Bee": 8,
+        "Honey Bee": 45,
+        "Lady Bug": 2,
+        "Total Count": 55,
+        "Temperature (C)": 22,
+        "Humidity (%)": 55
+    },
+    {
+        "Date": "2023-01-11",
+        "Time": "09:02",
+        "Bumble Bee": 14,
+        "Honey Bee": 25,
+        "Lady Bug": 4,
+        "Total Count": 43,
+        "Temperature (C)": 20,
+        "Humidity (%)": 50
+    },
+    {
+        "Date": "2023-01-12",
+        "Time": "16:31",
+        "Bumble Bee": 3,
+        "Honey Bee": 77,
+        "Lady Bug": 1,
+        "Total Count": 81,
+        "Temperature (C)": 29,
+        "Humidity (%)": 74
+    },
+    {
+        "Date": "2023-01-13",
+        "Time": "07:40",
+        "Bumble Bee": 21,
+        "Honey Bee": 83,
+        "Lady Bug": 2,
+        "Total Count": 106,
+        "Temperature (C)": 25,
+        "Humidity (%)": 69
+    },
+    {
+        "Date": "2023-01-14",
+        "Time": "12:09",
+        "Bumble Bee": 5,
+        "Honey Bee": 50,
+        "Lady Bug": 8,
+        "Total Count": 63,
+        "Temperature (C)": 23,
+        "Humidity (%)": 58
+    },
+    {
+        "Date": "2023-01-15",
+        "Time": "15:56",
+        "Bumble Bee": 19,
+        "Honey Bee": 66,
+        "Lady Bug": 0,
+        "Total Count": 85,
+        "Temperature (C)": 28,
+        "Humidity (%)": 65
+    },
+    {
+        "Date": "2023-01-16",
+        "Time": "06:12",
+        "Bumble Bee": 10,
+        "Honey Bee": 15,
+        "Lady Bug": 2,
+        "Total Count": 27,
+        "Temperature (C)": 17,
+        "Humidity (%)": 47
+    },
+    {
+        "Date": "2023-01-17",
+        "Time": "18:24",
+        "Bumble Bee": 9,
+        "Honey Bee": 98,
+        "Lady Bug": 4,
+        "Total Count": 111,
+        "Temperature (C)": 30,
+        "Humidity (%)": 79
+    },
+    {
+        "Date": "2023-01-18",
+        "Time": "13:58",
+        "Bumble Bee": 0,
+        "Honey Bee": 41,
+        "Lady Bug": 5,
+        "Total Count": 46,
+        "Temperature (C)": 21,
+        "Humidity (%)": 54
+    },
+    {
+        "Date": "2023-01-19",
+        "Time": "10:11",
+        "Bumble Bee": 13,
+        "Honey Bee": 29,
+        "Lady Bug": 1,
+        "Total Count": 43,
+        "Temperature (C)": 20,
+        "Humidity (%)": 56
+    },
+    {
+        "Date": "2023-01-20",
+        "Time": "14:47",
+        "Bumble Bee": 16,
+        "Honey Bee": 90,
+        "Lady Bug": 6,
+        "Total Count": 112,
+        "Temperature (C)": 29,
+        "Humidity (%)": 72
+    },
+    {
+        "Date": "2023-01-21",
+        "Time": "08:50",
+        "Bumble Bee": 2,
+        "Honey Bee": 55,
+        "Lady Bug": 2,
+        "Total Count": 59,
+        "Temperature (C)": 18,
+        "Humidity (%)": 51
+    },
+    {
+        "Date": "2023-01-22",
+        "Time": "17:39",
+        "Bumble Bee": 4,
+        "Honey Bee": 42,
+        "Lady Bug": 0,
+        "Total Count": 46,
+        "Temperature (C)": 26,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-01-23",
+        "Time": "12:25",
+        "Bumble Bee": 27,
+        "Honey Bee": 72,
+        "Lady Bug": 10,
+        "Total Count": 109,
+        "Temperature (C)": 28,
+        "Humidity (%)": 70
+    },
+    {
+        "Date": "2023-01-24",
+        "Time": "06:33",
+        "Bumble Bee": 6,
+        "Honey Bee": 28,
+        "Lady Bug": 3,
+        "Total Count": 37,
+        "Temperature (C)": 19,
+        "Humidity (%)": 52
+    },
+    {
+        "Date": "2023-01-25",
+        "Time": "16:14",
+        "Bumble Bee": 14,
+        "Honey Bee": 65,
+        "Lady Bug": 6,
+        "Total Count": 85,
+        "Temperature (C)": 27,
+        "Humidity (%)": 69
+    },
+    {
+        "Date": "2023-01-26",
+        "Time": "09:08",
+        "Bumble Bee": 5,
+        "Honey Bee": 22,
+        "Lady Bug": 4,
+        "Total Count": 31,
+        "Temperature (C)": 20,
+        "Humidity (%)": 58
+    },
+    {
+        "Date": "2023-01-27",
+        "Time": "11:46",
+        "Bumble Bee": 29,
+        "Honey Bee": 87,
+        "Lady Bug": 2,
+        "Total Count": 118,
+        "Temperature (C)": 28,
+        "Humidity (%)": 66
+    },
+    {
+        "Date": "2023-01-28",
+        "Time": "14:02",
+        "Bumble Bee": 11,
+        "Honey Bee": 47,
+        "Lady Bug": 0,
+        "Total Count": 58,
+        "Temperature (C)": 25,
+        "Humidity (%)": 60
+    },
+    {
+        "Date": "2023-01-29",
+        "Time": "07:55",
+        "Bumble Bee": 15,
+        "Honey Bee": 35,
+        "Lady Bug": 6,
+        "Total Count": 56,
+        "Temperature (C)": 24,
+        "Humidity (%)": 57
+    },
+    {
+        "Date": "2023-01-30",
+        "Time": "18:15",
+        "Bumble Bee": 1,
+        "Honey Bee": 92,
+        "Lady Bug": 4,
+        "Total Count": 97,
+        "Temperature (C)": 30,
+        "Humidity (%)": 74
+    },
+    {
+        "Date": "2023-01-31",
+        "Time": "13:27",
+        "Bumble Bee": 3,
+        "Honey Bee": 19,
+        "Lady Bug": 1,
+        "Total Count": 23,
+        "Temperature (C)": 18,
+        "Humidity (%)": 53
+    },
+    {
+        "Date": "2023-02-01",
+        "Time": "08:49",
+        "Bumble Bee": 7,
+        "Honey Bee": 26,
+        "Lady Bug": 0,
+        "Total Count": 33,
+        "Temperature (C)": 21,
+        "Humidity (%)": 59
+    },
+    {
+        "Date": "2023-02-02",
+        "Time": "10:10",
+        "Bumble Bee": 13,
+        "Honey Bee": 38,
+        "Lady Bug": 5,
+        "Total Count": 56,
+        "Temperature (C)": 22,
+        "Humidity (%)": 62
+    },
+    {
+        "Date": "2023-02-03",
+        "Time": "16:00",
+        "Bumble Bee": 10,
+        "Honey Bee": 76,
+        "Lady Bug": 3,
+        "Total Count": 89,
+        "Temperature (C)": 28,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-02-04",
+        "Time": "06:42",
+        "Bumble Bee": 8,
+        "Honey Bee": 14,
+        "Lady Bug": 1,
+        "Total Count": 23,
+        "Temperature (C)": 17,
+        "Humidity (%)": 49
+    },
+    {
+        "Date": "2023-02-05",
+        "Time": "11:11",
+        "Bumble Bee": 25,
+        "Honey Bee": 85,
+        "Lady Bug": 2,
+        "Total Count": 112,
+        "Temperature (C)": 26,
+        "Humidity (%)": 71
+    },
+    {
+        "Date": "2023-02-06",
+        "Time": "17:29",
+        "Bumble Bee": 2,
+        "Honey Bee": 43,
+        "Lady Bug": 5,
+        "Total Count": 50,
+        "Temperature (C)": 24,
+        "Humidity (%)": 66
+    },
+    {
+        "Date": "2023-02-07",
+        "Time": "07:35",
+        "Bumble Bee": 9,
+        "Honey Bee": 59,
+        "Lady Bug": 1,
+        "Total Count": 69,
+        "Temperature (C)": 22,
+        "Humidity (%)": 55
+    },
+    {
+        "Date": "2023-02-08",
+        "Time": "12:58",
+        "Bumble Bee": 16,
+        "Honey Bee": 30,
+        "Lady Bug": 4,
+        "Total Count": 50,
+        "Temperature (C)": 25,
+        "Humidity (%)": 60
+    },
+    {
+        "Date": "2023-02-09",
+        "Time": "09:09",
+        "Bumble Bee": 5,
+        "Honey Bee": 14,
+        "Lady Bug": 0,
+        "Total Count": 19,
+        "Temperature (C)": 20,
+        "Humidity (%)": 51
+    },
+    {
+        "Date": "2023-02-10",
+        "Time": "15:18",
+        "Bumble Bee": 18,
+        "Honey Bee": 95,
+        "Lady Bug": 6,
+        "Total Count": 119,
+        "Temperature (C)": 29,
+        "Humidity (%)": 75
+    },
+    {
+        "Date": "2023-02-11",
+        "Time": "13:46",
+        "Bumble Bee": 7,
+        "Honey Bee": 41,
+        "Lady Bug": 3,
+        "Total Count": 51,
+        "Temperature (C)": 23,
+        "Humidity (%)": 63
+    },
+    {
+        "Date": "2023-02-12",
+        "Time": "06:53",
+        "Bumble Bee": 20,
+        "Honey Bee": 84,
+        "Lady Bug": 1,
+        "Total Count": 105,
+        "Temperature (C)": 25,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-02-13",
+        "Time": "18:05",
+        "Bumble Bee": 12,
+        "Honey Bee": 28,
+        "Lady Bug": 4,
+        "Total Count": 44,
+        "Temperature (C)": 21,
+        "Humidity (%)": 55
+    },
+    {
+        "Date": "2023-02-14",
+        "Time": "09:22",
+        "Bumble Bee": 4,
+        "Honey Bee": 15,
+        "Lady Bug": 7,
+        "Total Count": 26,
+        "Temperature (C)": 19,
+        "Humidity (%)": 52
+    },
+    {
+        "Date": "2023-02-15",
+        "Time": "11:03",
+        "Bumble Bee": 3,
+        "Honey Bee": 98,
+        "Lady Bug": 2,
+        "Total Count": 103,
+        "Temperature (C)": 27,
+        "Humidity (%)": 73
+    },
+    {
+        "Date": "2023-02-16",
+        "Time": "16:56",
+        "Bumble Bee": 14,
+        "Honey Bee": 50,
+        "Lady Bug": 1,
+        "Total Count": 65,
+        "Temperature (C)": 26,
+        "Humidity (%)": 69
+    },
+    {
+        "Date": "2023-02-17",
+        "Time": "08:14",
+        "Bumble Bee": 19,
+        "Honey Bee": 34,
+        "Lady Bug": 8,
+        "Total Count": 61,
+        "Temperature (C)": 22,
+        "Humidity (%)": 57
+    },
+    {
+        "Date": "2023-02-18",
+        "Time": "14:29",
+        "Bumble Bee": 6,
+        "Honey Bee": 12,
+        "Lady Bug": 2,
+        "Total Count": 20,
+        "Temperature (C)": 18,
+        "Humidity (%)": 49
+    },
+    {
+        "Date": "2023-02-19",
+        "Time": "07:00",
+        "Bumble Bee": 2,
+        "Honey Bee": 99,
+        "Lady Bug": 1,
+        "Total Count": 102,
+        "Temperature (C)": 30,
+        "Humidity (%)": 78
+    },
+    {
+        "Date": "2023-02-20",
+        "Time": "17:44",
+        "Bumble Bee": 11,
+        "Honey Bee": 53,
+        "Lady Bug": 2,
+        "Total Count": 66,
+        "Temperature (C)": 25,
+        "Humidity (%)": 70
+    },
+    {
+        "Date": "2023-02-21",
+        "Time": "12:38",
+        "Bumble Bee": 4,
+        "Honey Bee": 20,
+        "Lady Bug": 0,
+        "Total Count": 24,
+        "Temperature (C)": 21,
+        "Humidity (%)": 56
+    },
+    {
+        "Date": "2023-02-22",
+        "Time": "06:31",
+        "Bumble Bee": 13,
+        "Honey Bee": 87,
+        "Lady Bug": 5,
+        "Total Count": 105,
+        "Temperature (C)": 27,
+        "Humidity (%)": 71
+    },
+    {
+        "Date": "2023-02-23",
+        "Time": "10:06",
+        "Bumble Bee": 18,
+        "Honey Bee": 64,
+        "Lady Bug": 3,
+        "Total Count": 85,
+        "Temperature (C)": 24,
+        "Humidity (%)": 64
+    },
+    {
+        "Date": "2023-02-24",
+        "Time": "15:33",
+        "Bumble Bee": 6,
+        "Honey Bee": 33,
+        "Lady Bug": 0,
+        "Total Count": 39,
+        "Temperature (C)": 23,
+        "Humidity (%)": 58
+    },
+    {
+        "Date": "2023-02-25",
+        "Time": "09:59",
+        "Bumble Bee": 2,
+        "Honey Bee": 17,
+        "Lady Bug": 4,
+        "Total Count": 23,
+        "Temperature (C)": 18,
+        "Humidity (%)": 52
+    },
+    {
+        "Date": "2023-02-26",
+        "Time": "11:45",
+        "Bumble Bee": 27,
+        "Honey Bee": 66,
+        "Lady Bug": 3,
+        "Total Count": 96,
+        "Temperature (C)": 26,
+        "Humidity (%)": 69
+    },
+    {
+        "Date": "2023-02-27",
+        "Time": "07:17",
+        "Bumble Bee": 0,
+        "Honey Bee": 28,
+        "Lady Bug": 5,
+        "Total Count": 33,
+        "Temperature (C)": 20,
+        "Humidity (%)": 54
+    },
+    {
+        "Date": "2023-02-28",
+        "Time": "16:10",
+        "Bumble Bee": 12,
+        "Honey Bee": 43,
+        "Lady Bug": 1,
+        "Total Count": 56,
+        "Temperature (C)": 23,
+        "Humidity (%)": 65
+    },
+    {
+        "Date": "2023-03-01",
+        "Time": "08:29",
+        "Bumble Bee": 9,
+        "Honey Bee": 37,
+        "Lady Bug": 7,
+        "Total Count": 53,
+        "Temperature (C)": 21,
+        "Humidity (%)": 59
+    },
+    {
+        "Date": "2023-03-02",
+        "Time": "13:54",
+        "Bumble Bee": 20,
+        "Honey Bee": 71,
+        "Lady Bug": 0,
+        "Total Count": 91,
+        "Temperature (C)": 25,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-03-03",
+        "Time": "17:28",
+        "Bumble Bee": 6,
+        "Honey Bee": 82,
+        "Lady Bug": 4,
+        "Total Count": 92,
+        "Temperature (C)": 27,
+        "Humidity (%)": 72
+    },
+    {
+        "Date": "2023-03-04",
+        "Time": "10:03",
+        "Bumble Bee": 3,
+        "Honey Bee": 90,
+        "Lady Bug": 1,
+        "Total Count": 94,
+        "Temperature (C)": 29,
+        "Humidity (%)": 74
+    },
+    {
+        "Date": "2023-03-05",
+        "Time": "06:55",
+        "Bumble Bee": 25,
+        "Honey Bee": 49,
+        "Lady Bug": 5,
+        "Total Count": 79,
+        "Temperature (C)": 24,
+        "Humidity (%)": 63
+    },
+    {
+        "Date": "2023-03-06",
+        "Time": "14:16",
+        "Bumble Bee": 11,
+        "Honey Bee": 34,
+        "Lady Bug": 2,
+        "Total Count": 47,
+        "Temperature (C)": 22,
+        "Humidity (%)": 56
+    },
+    {
+        "Date": "2023-03-07",
+        "Time": "07:11",
+        "Bumble Bee": 8,
+        "Honey Bee": 56,
+        "Lady Bug": 3,
+        "Total Count": 67,
+        "Temperature (C)": 21,
+        "Humidity (%)": 54
+    },
+    {
+        "Date": "2023-03-08",
+        "Time": "18:39",
+        "Bumble Bee": 0,
+        "Honey Bee": 76,
+        "Lady Bug": 1,
+        "Total Count": 77,
+        "Temperature (C)": 28,
+        "Humidity (%)": 71
+    },
+    {
+        "Date": "2023-03-09",
+        "Time": "09:00",
+        "Bumble Bee": 17,
+        "Honey Bee": 88,
+        "Lady Bug": 2,
+        "Total Count": 107,
+        "Temperature (C)": 26,
+        "Humidity (%)": 66
+    },
+    {
+        "Date": "2023-03-10",
+        "Time": "15:57",
+        "Bumble Bee": 5,
+        "Honey Bee": 42,
+        "Lady Bug": 4,
+        "Total Count": 51,
+        "Temperature (C)": 23,
+        "Humidity (%)": 60
+    },
+    {
+        "Date": "2023-03-11",
+        "Time": "13:41",
+        "Bumble Bee": 14,
+        "Honey Bee": 36,
+        "Lady Bug": 1,
+        "Total Count": 51,
+        "Temperature (C)": 24,
+        "Humidity (%)": 57
+    },
+    {
+        "Date": "2023-03-12",
+        "Time": "06:44",
+        "Bumble Bee": 16,
+        "Honey Bee": 78,
+        "Lady Bug": 10,
+        "Total Count": 104,
+        "Temperature (C)": 25,
+        "Humidity (%)": 70
+    },
+    {
+        "Date": "2023-03-13",
+        "Time": "11:50",
+        "Bumble Bee": 2,
+        "Honey Bee": 9,
+        "Lady Bug": 4,
+        "Total Count": 15,
+        "Temperature (C)": 18,
+        "Humidity (%)": 50
+    },
+    {
+        "Date": "2023-03-14",
+        "Time": "17:02",
+        "Bumble Bee": 21,
+        "Honey Bee": 95,
+        "Lady Bug": 3,
+        "Total Count": 119,
+        "Temperature (C)": 30,
+        "Humidity (%)": 76
+    },
+    {
+        "Date": "2023-03-15",
+        "Time": "08:33",
+        "Bumble Bee": 9,
+        "Honey Bee": 45,
+        "Lady Bug": 5,
+        "Total Count": 59,
+        "Temperature (C)": 21,
+        "Humidity (%)": 59
+    },
+    {
+        "Date": "2023-03-16",
+        "Time": "14:05",
+        "Bumble Bee": 3,
+        "Honey Bee": 58,
+        "Lady Bug": 2,
+        "Total Count": 63,
+        "Temperature (C)": 24,
+        "Humidity (%)": 61
+    },
+    {
+        "Date": "2023-03-17",
+        "Time": "10:27",
+        "Bumble Bee": 12,
+        "Honey Bee": 66,
+        "Lady Bug": 6,
+        "Total Count": 84,
+        "Temperature (C)": 25,
+        "Humidity (%)": 67
+    },
+    {
+        "Date": "2023-03-18",
+        "Time": "06:28",
+        "Bumble Bee": 1,
+        "Honey Bee": 33,
+        "Lady Bug": 1,
+        "Total Count": 35,
+        "Temperature (C)": 18,
+        "Humidity (%)": 52
+    },
+    {
+        "Date": "2023-03-19",
+        "Time": "15:42",
+        "Bumble Bee": 4,
+        "Honey Bee": 14,
+        "Lady Bug": 7,
+        "Total Count": 25,
+        "Temperature (C)": 19,
+        "Humidity (%)": 55
+    },
+    {
+        "Date": "2023-03-20",
+        "Time": "07:36",
+        "Bumble Bee": 26,
+        "Honey Bee": 62,
+        "Lady Bug": 0,
+        "Total Count": 88,
+        "Temperature (C)": 25,
+        "Humidity (%)": 63
+    },
+    {
+        "Date": "2023-03-21",
+        "Time": "13:17",
+        "Bumble Bee": 16,
+        "Honey Bee": 46,
+        "Lady Bug": 3,
+        "Total Count": 65,
+        "Temperature (C)": 24,
+        "Humidity (%)": 58
+    },
+    {
+        "Date": "2023-03-22",
+        "Time": "18:20",
+        "Bumble Bee": 11,
+        "Honey Bee": 89,
+        "Lady Bug": 1,
+        "Total Count": 101,
+        "Temperature (C)": 29,
+        "Humidity (%)": 73
+    },
+    {
+        "Date": "2023-03-23",
+        "Time": "09:46",
+        "Bumble Bee": 7,
+        "Honey Bee": 28,
+        "Lady Bug": 5,
+        "Total Count": 40,
+        "Temperature (C)": 20,
+        "Humidity (%)": 54
+    },
+    {
+        "Date": "2023-03-24",
+        "Time": "14:54",
+        "Bumble Bee": 13,
+        "Honey Bee": 95,
+        "Lady Bug": 0,
+        "Total Count": 108,
+        "Temperature (C)": 28,
+        "Humidity (%)": 71
+    },
+    {
+        "Date": "2023-03-25",
+        "Time": "06:07",
+        "Bumble Bee": 5,
+        "Honey Bee": 42,
+        "Lady Bug": 4,
+        "Total Count": 51,
+        "Temperature (C)": 18,
+        "Humidity (%)": 49
+    },
+    {
+        "Date": "2023-03-26",
+        "Time": "10:51",
+        "Bumble Bee": 0,
+        "Honey Bee": 77,
+        "Lady Bug": 1,
+        "Total Count": 78,
+        "Temperature (C)": 23,
+        "Humidity (%)": 61
+    },
+    {
+        "Date": "2023-03-27",
+        "Time": "17:38",
+        "Bumble Bee": 9,
+        "Honey Bee": 18,
+        "Lady Bug": 0,
+        "Total Count": 27,
+        "Temperature (C)": 20,
+        "Humidity (%)": 57
+    },
+    {
+        "Date": "2023-03-28",
+        "Time": "07:10",
+        "Bumble Bee": 23,
+        "Honey Bee": 67,
+        "Lady Bug": 6,
+        "Total Count": 96,
+        "Temperature (C)": 26,
+        "Humidity (%)": 70
+    },
+    {
+        "Date": "2023-03-29",
+        "Time": "13:32",
+        "Bumble Bee": 2,
+        "Honey Bee": 31,
+        "Lady Bug": 10,
+        "Total Count": 43,
+        "Temperature (C)": 22,
+        "Humidity (%)": 59
+    },
+    {
+        "Date": "2023-03-30",
+        "Time": "11:57",
+        "Bumble Bee": 5,
+        "Honey Bee": 88,
+        "Lady Bug": 1,
+        "Total Count": 94,
+        "Temperature (C)": 27,
+        "Humidity (%)": 71
+    },
+    {
+        "Date": "2023-03-31",
+        "Time": "15:16",
+        "Bumble Bee": 14,
+        "Honey Bee": 56,
+        "Lady Bug": 4,
+        "Total Count": 74,
+        "Temperature (C)": 25,
+        "Humidity (%)": 67
+    },
+    {
+        "Date": "2023-04-01",
+        "Time": "09:33",
+        "Bumble Bee": 1,
+        "Honey Bee": 47,
+        "Lady Bug": 3,
+        "Total Count": 51,
+        "Temperature (C)": 20,
+        "Humidity (%)": 55
+    },
+    {
+        "Date": "2023-04-02",
+        "Time": "07:02",
+        "Bumble Bee": 18,
+        "Honey Bee": 14,
+        "Lady Bug": 2,
+        "Total Count": 34,
+        "Temperature (C)": 19,
+        "Humidity (%)": 52
+    },
+    {
+        "Date": "2023-04-03",
+        "Time": "14:43",
+        "Bumble Bee": 26,
+        "Honey Bee": 70,
+        "Lady Bug": 6,
+        "Total Count": 102,
+        "Temperature (C)": 27,
+        "Humidity (%)": 68
+    },
+    {
+        "Date": "2023-04-04",
+        "Time": "17:01",
+        "Bumble Bee": 3,
+        "Honey Bee": 26,
+        "Lady Bug": 0,
+        "Total Count": 29,
+        "Temperature (C)": 21,
+        "Humidity (%)": 60
+    },
+    {
+        "Date": "2023-04-05",
+        "Time": "06:25",
+        "Bumble Bee": 7,
+        "Honey Bee": 58,
+        "Lady Bug": 2,
+        "Total Count": 67,
+        "Temperature (C)": 23,
+        "Humidity (%)": 65
+    },
+    {
+        "Date": "2023-04-06",
+        "Time": "13:12",
+        "Bumble Bee": 4,
+        "Honey Bee": 41,
+        "Lady Bug": 1,
+        "Total Count": 46,
+        "Temperature (C)": 24,
+        "Humidity (%)": 63
+    },
+    {
+        "Date": "2023-04-07",
+        "Time": "09:14",
+        "Bumble Bee": 11,
+        "Honey Bee": 33,
+        "Lady Bug": 5,
+        "Total Count": 49,
+        "Temperature (C)": 22,
+        "Humidity (%)": 56
+    },
+    {
+        "Date": "2023-04-08",
+        "Time": "16:37",
+        "Bumble Bee": 21,
+        "Honey Bee": 94,
+        "Lady Bug": 0,
+        "Total Count": 115,
+        "Temperature (C)": 28,
+        "Humidity (%)": 73
+    },
+    {
+        "Date": "2023-04-09",
+        "Time": "11:28",
+        "Bumble Bee": 0,
+        "Honey Bee": 49,
+        "Lady Bug": 3,
+        "Total Count": 52,
+        "Temperature (C)": 20,
+        "Humidity (%)": 58
+    },
+    {
+        "Date": "2023-04-10",
+        "Time": "08:08",
+        "Bumble Bee": 8,
+        "Honey Bee": 72,
+        "Lady Bug": 1,
+        "Total Count": 81,
+        "Temperature (C)": 25,
+        "Humidity (%)": 66
+    }
+]
