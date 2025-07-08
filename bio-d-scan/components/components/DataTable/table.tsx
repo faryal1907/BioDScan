@@ -3,17 +3,18 @@ import { useSelector } from 'react-redux';
 import { DataTable } from 'mantine-datatable';
 import { MagnifyingGlass } from 'react-loader-spinner';
 import mqttService, { BeeData } from '@/lib/mqtt';
+import { IRootState } from '@/store';
 
 const ComponentsDatatablesOrderSorting = () => {
-    const isRtl = useSelector((state) => state.themeConfig.rtlClass) === 'rtl';
+    const isRtl = useSelector((state: IRootState) => state.themeConfig.rtlClass) === 'rtl';
     const [page, setPage] = useState(1);
     const PAGE_SIZES = [10, 20, 30, 50, 100];
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState([]);
-    const [recordsData, setRecordsData] = useState([]);
+    const [initialRecords, setInitialRecords] = useState<BeeData[]>([]);
+    const [recordsData, setRecordsData] = useState<BeeData[]>([]);
     const [search, setSearch] = useState('');
     const [filterField, setFilterField] = useState('id'); // Default to 'id'
-    const [sortStatus, setSortStatus] = useState({ columnAccessor: 'timestamp', direction: 'desc' });
+    const [sortStatus, setSortStatus] = useState<{ columnAccessor: string; direction: 'asc' | 'desc' }>({ columnAccessor: 'timestamp', direction: 'desc' });
     const [loading, setLoading] = useState(true);
     const [mqttConnected, setMqttConnected] = useState(false);
 
@@ -55,7 +56,7 @@ const ComponentsDatatablesOrderSorting = () => {
                         if (data.temperature !== undefined && data.humidity !== undefined) {
                             handleMQTTData(data as BeeData);
                         }
-                    } catch (error) {
+                    } catch (error: any) {
                         console.log('Message is not bee data format');
                     }
                 });
@@ -65,7 +66,7 @@ const ComponentsDatatablesOrderSorting = () => {
                     setMqttConnected(connected);
                 });
                 
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Failed to connect to MQTT:', error);
                 setMqttConnected(false);
             }
@@ -89,7 +90,7 @@ const ComponentsDatatablesOrderSorting = () => {
                 const result = await response.json();
                 console.log('API response:', result);
                 setInitialRecords(Array.isArray(result.data) ? result.data : []);
-            } catch (error) {
+            } catch (error: any) {
                 console.error('Error loading data:', error.message);
                 setInitialRecords([]);
             } finally {
