@@ -1,79 +1,27 @@
+# Bio-D-Scan: Bee Monitoring System
 
+Bio-D-Scan is a real-time bee monitoring system that collects environmental data (temperature, humidity, bee counts) from a Raspberry Pi via MQTT, stores it in MongoDB, and displays it on a responsive Next.js dashboard. The system uses FastAPI as the backend to handle MQTT communication and API requests, with HiveMQ as the MQTT broker.
 
 ## Features
 
 ### Backend Features
-- **FastAPI** REST API with automatic documentation
-- **MongoDB** integration for data storage
-- **Proxy endpoints** with realistic sample data generation
+- **FastAPI** REST API with automatic documentation (`/docs` and `/redoc`)
+- **MongoDB** integration for persistent storage of sensor data
+- **HiveMQ MQTT** integration for real-time data from Raspberry Pi
 - **Real-time data** processing and analytics
-- **CORS** support for frontend integration
+- **CORS** support for seamless frontend integration
 
 ### Frontend Features
 - **Next.js 14** with App Router
 - **Responsive dashboard** with modern UI
-- **Data visualization** with charts and graphs
-- **Real-time data** fetching and display
+- **Data visualization** with Chart.js for charts and graphs
+- **Real-time data** fetching and display via polling
 - **Data tables** with sorting and filtering
 
-### Sample Data Generation
-- **720 data points** (30 days × 24 hours)
-- **Realistic bee behavior** patterns
-- **Temperature cycles** following daily patterns
-- **Humidity variations** inversely related to temperature
-- **Bee activity** based on time and environmental conditions
-
-## Dataflow Overview
-
-### How Data Moves Through the Application
-
-1. **User Interaction (Frontend UI)**
-   - The user interacts with the frontend (Next.js/React), such as viewing dashboards or submitting forms.
-
-2. **Frontend API Request**
-   - The frontend makes a request to its own API route (e.g., `/api/data`).
-   - Example: `fetch('/api/data')` in React components.
-
-3. **Frontend API Route (Proxy Layer)**
-   - The Next.js API route receives the request and acts as a proxy.
-   - It forwards the request to the backend FastAPI server (e.g., `http://localhost:8000/api/bee-data`).
-
-4. **Backend Processing**
-   - The FastAPI backend receives the request.
-   - If MongoDB is configured, it fetches real data from the database.
-   - If not, it generates and returns sample/proxy data.
-
-5. **Backend Response**
-   - The backend sends the data (JSON) back to the frontend API route.
-
-6. **Frontend API Route Response**
-   - The frontend API route receives the backend's response and forwards it to the original frontend component.
-
-7. **UI Update**
-   - The React component receives the data and updates the UI (tables, charts, dashboards, etc.).
-
-
-### Dataflow Diagram
-
-```mermaid
-sequenceDiagram
-    participant User
-    participant Frontend_UI as Frontend UI (React)
-    participant Frontend_API as Frontend API Route (/api/data)
-    participant Backend as Backend API (FastAPI)
-    participant DB as MongoDB (optional)
-
-    User->>Frontend_UI: Interact (view dashboard, submit form)
-    Frontend_UI->>Frontend_API: fetch('/api/data')
-    Frontend_API->>Backend: GET /api/bee-data
-    Backend->>DB: (optional) Query MongoDB
-    DB-->>Backend: Data (if MongoDB used)
-    Backend-->>Frontend_API: JSON data
-    Frontend_API-->>Frontend_UI: JSON data
-    Frontend_UI-->>User: Display data (charts, tables, etc.)
-```
-
-**Summary:** The frontend never talks directly to the backend; it always goes through its own API routes, which act as a bridge/proxy. Data flows: User → Frontend UI → Frontend API Route → Backend API → (MongoDB) → Backend API → Frontend API Route → Frontend UI → User.
+### Raspberry Pi Features
+- Publishes sensor data (temperature, humidity, bee counts) to HiveMQ MQTT broker
+- Configurable MQTT topic and QoS settings
+- Simulates realistic bee monitoring data (customizable)
 
 ## 🛠️ Technology Stack
 
@@ -83,6 +31,7 @@ sequenceDiagram
 - **Uvicorn 0.24.0**
 - **Pydantic 2.5.0**
 - **Motor 3.3.1** (Async MongoDB driver)
+- **Paho-MQTT 1.6.1** (MQTT client)
 - **Python-dotenv 1.1.1**
 
 ### Frontend
@@ -92,12 +41,22 @@ sequenceDiagram
 - **Tailwind CSS**
 - **Chart.js** for data visualization
 
+### Raspberry Pi
+- **Python 3.8+**
+- **Paho-MQTT 1.6.1**
+
+### Infrastructure
+- **HiveMQ Cloud** (MQTT broker)
+- **MongoDB** (local or MongoDB Atlas)
+
 ## 📋 Prerequisites
 
-- **Python 3.11** or higher
-- **Node.js 18** or higher
-- **MongoDB** (optional - uses proxy data for development)
+- **Python 3.11** or higher (for backend and Raspberry Pi)
+- **Node.js 18** or higher (for frontend)
+- **MongoDB** (local instance or MongoDB Atlas account)
+- **HiveMQ Cloud** account (or self-hosted HiveMQ broker)
 - **Git**
+- **Raspberry Pi** with Python and `paho-mqtt` installed
 
 ## 🔧 Installation & Setup
 
@@ -107,39 +66,71 @@ git clone <repository-url>
 cd bio-d-scan
 ```
 
-### 2. Backend Setup
+### 2. MongoDB Setup
+- **Local MongoDB**:
+  - Install MongoDB Community Edition: [MongoDB Installation Guide](https://www.mongodb.com/docs/manual/installation/)
+  - Start MongoDB: `mongod --dbpath <your-data-path>`
+  - Default connection: `mongodb://localhost:27017`
+- **MongoDB Atlas**:
+  - Create a free cluster at [MongoDB Atlas](https://www.mongodb.com/cloud/atlas)
+  - Get the connection string (e.g., `mongodb+srv://<username>:<password>@cluster0.mongodb.net/<dbname>`)
+  - Update `.env` with the connection string (see Backend Setup)
 
+### 3. Backend Setup
 ```bash
 cd backend
 
 # Create virtual environment
 python -m venv venv
 
-# Activate virtual environment
+# Activate virtual environment (Windows)
 .\venv\Scripts\Activate.ps1
+# OR (Linux/Mac)
+source venv/bin/activate
 
 # Install dependencies
-pip install -r requirements.txt
+pip install fastapi uvicorn pydantic motor paho-mqtt python-dotenv
 ```
 
-### 3. Frontend Setup
+Create a `.env` file in the `backend` directory:
+```env
+MONGO_URI=mongodb://localhost:27017/bio_d_scan
+HIVEMQ_BROKER=your-cluster-id.s1.eu.hivemq.cloud
+HIVEMQ_PORT=8883
+HIVEMQ_USERNAME=your-username
+HIVEMQ_PASSWORD=your-password
+HIVEMQ_TOPIC=sensors/bee-data
+```
 
+### 4. Frontend Setup
 ```bash
-cd bio-d-scan
+cd frontend
 
 # Install dependencies
 npm install
 ```
 
+Update `frontend/.env.local` with the backend API URL:
+```env
+NEXT_PUBLIC_API_URL=http://localhost:8000
+```
+
+### 5. Raspberry Pi Setup
+- Install Python 3.8+ and `paho-mqtt`: `pip install paho-mqtt`
+- Copy the Raspberry Pi script (provided below) to the Pi
+- Update the script with HiveMQ credentials and topic
+- Run script: `python pi_publisher.py`
+
 ## 🚀 Running the Application
 
 ### Backend Development Server
-
 ```bash
 cd backend
 
 # Activate virtual environment
-.\venv\Scripts\Activate.ps1
+.\venv\Scripts\Activate.ps1  # Windows
+# OR
+source venv/bin/activate  # Linux/Mac
 
 # Start the server
 python -m uvicorn app.main:app --reload
@@ -148,9 +139,8 @@ python -m uvicorn app.main:app --reload
 **Backend will be available at:** `http://localhost:8000`
 
 ### Frontend Development Server
-
 ```bash
-cd bio-d-scan
+cd frontend
 
 # Start the development server
 npm run dev
@@ -158,39 +148,16 @@ npm run dev
 
 **Frontend will be available at:** `http://localhost:3000`
 
-## 🧪 Testing
-
-### Test Backend API
+### Raspberry Pi MQTT Publisher
+On the Raspberry Pi:
 ```bash
-# Test the API endpoints
-python test_api.py
+python pi_publisher.py
 ```
 
-### Test Database Connection
-```bash
-# Test MongoDB connection
-python -c "from app.database import test_connection; import asyncio; asyncio.run(test_connection())"
-```
-
-##  API Endpoints
-
-### Core Endpoints
-- `GET /api/external-bee-data` - Returns sample bee monitoring data
-- `GET /api/bee-data` - Returns stored bee data (if any)
-- `POST /api/bee-data` - Adds new bee data to database
-- `GET /api/stats` - Returns statistics about stored data
-
-### Frontend API
-- `GET /api/data` - Frontend proxy to backend data
-- `POST /api/data` - Add new data to frontend database
-
-## 📊 Sample Data Structure
-
-The application generates realistic bee monitoring data with:
-
+## 📊 Data Structure
+The Raspberry Pi publishes data to the `sensors/bee-data` topic in the following JSON format:
 ```json
 {
-  "id": "sample_123",
   "hive_id": "HIVE-001",
   "temperature": 22.5,
   "humidity": 65.2,
@@ -198,68 +165,85 @@ The application generates realistic bee monitoring data with:
   "honey_bee_count": 8,
   "lady_bug_count": 1,
   "location": "North Field",
-  "notes": "Automated reading from HIVE-001 - Activity level: High",
+  "notes": "Automated reading from HIVE-001",
   "timestamp": "2025-01-15T10:30:00"
 }
 ```
 
+The backend stores this data verbatim in MongoDB and serves it to the frontend.
+
 ## 🔍 Data Characteristics
+- **Temperature**: 10-30°C, with daily variations (±8°C)
+- **Humidity**: 30-90%, inversely related to temperature
+- **Bee Activity**: Peaks from 8:00 AM to 6:00 PM, influenced by temperature (optimal: 15-25°C)
+- **Timestamp**: ISO 8601 format, generated by the Raspberry Pi
 
-### Temperature Data
-- **Base temperature**: 20°C
-- **Daily variation**: ±8°C (warmer during day, cooler at night)
-- **Realistic range**: 10-30°C
+##  API Endpoints
+### Core Endpoints
+- `GET /api/bee-data`: Retrieve all bee data from MongoDB
+- `POST /api/bee-data`: Add new bee data (used internally by MQTT handler)
+- `GET /api/stats`: Get statistics (e.g., average temperature, humidity, bee counts)
+- `GET /api/bee-data/latest`: Get the latest bee data entry
 
-### Humidity Data
-- **Base humidity**: 70%
-- **Inverse relationship** with temperature
-- **Realistic range**: 30-90%
+### Frontend API
+- `GET /api/data`: Proxy endpoint to fetch bee data
+- `GET /api/data/latest`: Fetch the latest bee data for display
 
-### Bee Activity Patterns
-- **Peak activity**: 8:00 AM - 6:00 PM
-- **Optimal temperature**: 15-25°C
-- **Seasonal variations** in activity levels
+## 🧪 Testing
+### Test Backend API
+```bash
+# Test API endpoints
+python test_api.py
+```
+
+### Test MongoDB Connection
+```bash
+# Test MongoDB connection
+python -c "from app.database import test_connection; import asyncio; asyncio.run(test_connection())"
+```
+
+### Test MQTT Connection
+- Ensure the Raspberry Pi is publishing data
+- Check backend logs for received MQTT messages
+- Verify data in MongoDB using a client like MongoDB Compass
 
 ## 🐛 Troubleshooting
-
 ### Common Issues
-
-1. **Python Version Conflicts**
-   - Ensure you're using Python 3.11
-   - Use virtual environment to isolate dependencies
-
-2. **MongoDB Connection Issues**
-   - The app uses proxy data by default
-   - MongoDB is optional for development
-
-3. **Frontend Build Issues**
-   - Clear Next.js cache: `rm -rf .next`
-   - Reinstall dependencies: `npm install`
-
-4. **Port Conflicts**
-   - Backend: Change port in uvicorn command
-   - Frontend: Change port in package.json scripts
+1. **MongoDB Connection Issues**:
+   - Verify `MONGO_URI` in `.env`
+   - Ensure MongoDB is running or Atlas credentials are correct
+   - Test connection: `python -m app.database test_connection`
+2. **HiveMQ Connection Issues**:
+   - Check `HIVEMQ_BROKER`, `USERNAME`, and `PASSWORD` in `.env`
+   - Ensure port `8883` is open and TLS is enabled
+   - Test with a standalone MQTT client (e.g., `mosquitto_sub`)
+3. **Frontend Fetch Errors**:
+   - Verify `NEXT_PUBLIC_API_URL` in `frontend/.env.local`
+   - Ensure backend is running at `http://localhost:8000`
+   - Check CORS settings in `app.main`
+4. **Port Conflicts**:
+   - Backend: Change port in `uvicorn` command (e.g., `--port 8001`)
+   - Frontend: Update port in `package.json` scripts
+5. **Raspberry Pi Issues**:
+   - Ensure `paho-mqtt` is installed
+   - Verify network connectivity to HiveMQ broker
+   - Check logs for MQTT connection errors
 
 ## 📝 Development Notes
-
-### Proxy Data System
-- **No external dependencies** required for development
-- **Realistic data generation** for testing
-- **Easy to switch** to real API endpoints
-
-### Database Configuration
-- **MongoDB Atlas** support for production
-- **Local MongoDB** support for development
-- **Graceful fallback** to proxy data
-
+- **MongoDB**: Data is stored in the `bio_d_scan` database, `bee_data` collection
+- **MQTT**: Uses QoS 1 for reliable delivery; adjust in `pi_publisher.py` and `app.main` if needed
+- **Real-Time Updates**: Frontend polls every 5 seconds; consider WebSockets for true real-time
+- **Security**: Add JWT authentication for production API endpoints
+- **Deployment**: Use Docker for production; configure environment variables securely
 
 ## 🆘 Support
-
-For support and questions:
-- Check the troubleshooting section
-- Review API documentation at `/docs` when backend is running
+- Check `/docs` or `/redoc` when backend is running for API documentation
 - Open an issue on GitHub
+- Contact support via [HiveMQ Community](https://community.hivemq.com/) or [MongoDB Community](https://www.mongodb.com/community/forums/)
 
----
-
-**Note**: This project uses proxy data for development. For production deployment, configure real data sources and MongoDB connections.
+## Architecture Overview
+- **Raspberry Pi (Node)**: Publishes bee monitoring data to `sensors/bee-data` topic via HiveMQ MQTT
+- **FastAPI Backend**: Subscribes to MQTT topic, stores data in MongoDB, and exposes API endpoints
+- **Next.js Frontend**: Fetches data from backend and displays it in a responsive dashboard
+- **HiveMQ Broker**: Facilitates MQTT communication (HiveMQ Cloud recommended)
+- **MongoDB**: Stores all sensor data for persistence and querying

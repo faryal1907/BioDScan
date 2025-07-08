@@ -20,17 +20,18 @@ import IconTrendingUp from '@/components/icon/icon-trending-up';
 import IconUsersGroup from '@/components/icon/icon-users-group';
 import { IRootState } from '@/store';
 import Link from 'next/link';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import ReactApexChart from 'react-apexcharts';
 import { useSelector } from 'react-redux';
 import PerfectScrollbar from 'react-perfect-scrollbar';
 import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
-import DataTable from '../components/DataTable/table';
-import ComponentsDatatablesOrderSorting from '../components/DataTable/table';
+import { DataTable } from 'mantine-datatable';
 
-const DynamicPopulationMap = dynamic(() => import('../components/Map/PopulationMap'), {
+const PAGE_SIZES = [10, 20, 30, 50, 100];
+
+const DynamicPopulationMap = dynamic(() => import('@/components/components/Map/PopulationMap'), {
     ssr: false,
     loading: () => <p>Loading map...</p>,
 });
@@ -41,9 +42,52 @@ const ComponentsDashboardAnalytics = () => {
     const [isMounted, setIsMounted] = useState(false);
     const [bioSusBee, setBioSusBee] = useState(false);
 
+    // Fetch bee/environmental data from the API
+    const [beeData, setBeeData] = useState([]);
+    const [loadingBeeData, setLoadingBeeData] = useState(true);
+    const [page, setPage] = useState(1);
+    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
+    const [search, setSearch] = useState('');
+
     useEffect(() => {
         setIsMounted(true);
+        const fetchBeeData = async () => {
+            setLoadingBeeData(true);
+            try {
+                const response = await fetch('/api/external-bee-data');
+                const result = await response.json();
+                setBeeData(result.data || []);
+            } catch (error) {
+                setBeeData([]);
+            } finally {
+                setLoadingBeeData(false);
+            }
+        };
+        fetchBeeData();
     }, []);
+
+    // Filter and paginate
+    const filteredData = beeData.filter((item) =>
+      Object.values(item).some((val) =>
+        String(val).toLowerCase().includes(search.toLowerCase())
+      )
+    );
+    const from = (page - 1) * pageSize;
+    const to = from + pageSize;
+    const paginatedData = filteredData.slice(from, to);
+
+    const beeColumns = [
+      { accessor: 'id', title: 'ID' },
+      { accessor: 'hive_id', title: 'Hive ID' },
+      { accessor: 'temperature', title: 'Temperature (°C)' },
+      { accessor: 'humidity', title: 'Humidity (%)' },
+      { accessor: 'bumble_bee_count', title: 'Bumble Bee Count' },
+      { accessor: 'honey_bee_count', title: 'Honey Bee Count' },
+      { accessor: 'lady_bug_count', title: 'Ladybug Count' },
+      { accessor: 'location', title: 'Location' },
+      { accessor: 'notes', title: 'Notes' },
+      { accessor: 'timestamp', title: 'Timestamp', render: (record: Record<string, any>) => new Date(record.timestamp).toLocaleString() },
+    ];
 
     const beesData = {
         'Honey Bee': {
@@ -204,11 +248,11 @@ const ComponentsDashboardAnalytics = () => {
                 data: [58, 44, 55, 57, 56, 61, 58, 63, 60, 66, 56, 63],
             },
             {
-                name: 'Lady Bug', // updated name to match "lady bug"
+                name: 'Lady Bug',
                 data: [91, 76, 85, 101, 98, 87, 105, 91, 114, 94, 66, 70],
             },
             {
-                name: 'Bumble Bee', // new series added
+                name: 'Bumble Bee',
                 data: [75, 68, 72, 66, 80, 78, 82, 77, 79, 76, 74, 80],
             },
         ],
@@ -228,7 +272,6 @@ const ComponentsDashboardAnalytics = () => {
                 width: 2,
                 colors: ['transparent'],
             },
-            // Updated colors: Honey Bee = yellow, Lady Bug = red, Bumble Bee = brown
             colors: ['#ffbb44', '#ff0000', '#8B4513'],
             dropShadow: {
                 enabled: true,
@@ -311,7 +354,7 @@ const ComponentsDashboardAnalytics = () => {
             stroke: {
                 show: false,
             },
-            labels: ['Sand', 'Silt', 'Clay'], // updated labels for soil composition
+            labels: ['Sand', 'Silt', 'Clay'],
             colors: ['#4361ee', '#805dca', '#e2a03f'],
             responsive: [
                 {
@@ -397,7 +440,7 @@ const ComponentsDashboardAnalytics = () => {
         options: {
             chart: {
                 height: 300,
-                type: 'donut' as const, // ensures TypeScript treats it as the literal "donut"
+                type: 'donut' as const,
                 zoom: {
                     enabled: false,
                 },
@@ -441,7 +484,7 @@ const ComponentsDashboardAnalytics = () => {
         options: {
             chart: {
                 height: 360,
-                type: 'bar' as const, // Explicit literal type
+                type: 'bar' as const,
                 fontFamily: 'Nunito, sans-serif',
                 toolbar: {
                     show: false,
@@ -454,7 +497,6 @@ const ComponentsDashboardAnalytics = () => {
                 width: 2,
                 colors: ['transparent'],
             },
-            // Colors: first series yellow, second series red
             colors: ['#ffbb44', '#ff0000'],
             dropShadow: {
                 enabled: true,
@@ -487,7 +529,6 @@ const ComponentsDashboardAnalytics = () => {
                 },
             },
             xaxis: {
-                // Display data on a per-month basis for one year
                 categories: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'],
                 axisBorder: {
                     show: true,
@@ -545,12 +586,6 @@ const ComponentsDashboardAnalytics = () => {
                         </div>
                         <div className="flex flex-col space-y-5">
                             <div className="flex items-center">
-                                {/* <div className="h-9 w-9">
-                                    <div className="flex h-9 w-9 overflow-hidden items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-primary dark:text-white-light">
-                                        <IconChrome className="h-5 w-5" />
-                                      
-                                    </div>
-                                </div> */}
                                 <div className="w-full flex-initial px-3">
                                     <div className="w-summary-info mb-1 flex justify-between font-semibold text-white-dark">
                                         <h6>Buchinghamshire</h6>
@@ -567,11 +602,6 @@ const ComponentsDashboardAnalytics = () => {
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                {/* <div className="h-9 w-9">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-danger/10 text-danger dark:bg-danger dark:text-white-light">
-                                        <IconSafari className="h-5 w-5" />
-                                    </div>
-                                </div> */}
                                 <div className="w-full flex-initial px-3">
                                     <div className="w-summary-info mb-1 flex justify-between font-semibold text-white-dark">
                                         <h6>BedfordShire</h6>
@@ -588,11 +618,6 @@ const ComponentsDashboardAnalytics = () => {
                                 </div>
                             </div>
                             <div className="flex items-center">
-                                {/* <div className="h-9 w-9">
-                                    <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-warning/10 text-warning dark:bg-warning dark:text-white-light">
-                                        <IconGlobe className="h-5 w-5" />
-                                    </div>
-                                </div> */}
                                 <div className="w-full flex-initial px-3">
                                     <div className="w-summary-info mb-1 flex justify-between font-semibold text-white-dark">
                                         <h6>Lancashire</h6>
@@ -675,7 +700,6 @@ const ComponentsDashboardAnalytics = () => {
                         <div className="flex pr-5 pl-5 w-full items-center justify-between">
                             <div className="flex">
                                 <div className="flex h-16 w-16 overflow-hidden shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-primary dark:text-white-light">
-                                    {/* <IconUsersGroup className="h-5 w-5" /> */}
                                     <Image className="w-16 h-16" src="/assets/images/Dashboard/Home/honeybee1.jpg" alt="Honey Bee" height={64} width={64} />
                                 </div>
                                 <div className="font-semibold ltr:ml-3 rtl:mr-3">
@@ -760,104 +784,13 @@ const ComponentsDashboardAnalytics = () => {
                         </div>
 
                         <ReactApexChart series={donutChart.series} options={donutChart.options} className="rounded-lg bg-white dark:bg-black" type="donut" height={300} width={'100%'} />
-                        {/* <PerfectScrollbar className="perfect-scrollbar relative h-[360px] ltr:-mr-3 ltr:pr-3 rtl:-ml-3 rtl:pl-3">
-                            <div className="space-y-7">
-                                <div className="flex">
-                                    <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-secondary text-white shadow shadow-secondary">
-                                            <IconPlus className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">
-                                            New project created :{' '}
-                                            <button type="button" className="text-success">
-                                                [VRISTO Admin Template]
-                                            </button>
-                                        </h5>
-                                        <p className="text-xs text-white-dark">27 Feb, 2020</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-success text-white shadow-success">
-                                            <IconMail className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">
-                                            Mail sent to{' '}
-                                            <button type="button" className="text-white-dark">
-                                                HR
-                                            </button>{' '}
-                                            and{' '}
-                                            <button type="button" className="text-white-dark">
-                                                Admin
-                                            </button>
-                                        </h5>
-                                        <p className="text-xs text-white-dark">28 Feb, 2020</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-white">
-                                            <IconChecks className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">Server Logs Updated</h5>
-                                        <p className="text-xs text-white-dark">27 Feb, 2020</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-danger text-white">
-                                            <IconChecks className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">
-                                            Task Completed :
-                                            <button type="button" className="ml-1 text-success">
-                                                [Backup Files EOD]
-                                            </button>
-                                        </h5>
-                                        <p className="text-xs text-white-dark">01 Mar, 2020</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    <div className="relative z-10 shrink-0 before:absolute before:left-4 before:top-10 before:h-[calc(100%-24px)] before:w-[2px] before:bg-white-dark/30 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-warning text-white">
-                                            <IconFile className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">
-                                            Documents Submitted from <button type="button">Sara</button>
-                                        </h5>
-                                        <p className="text-xs text-white-dark">10 Mar, 2020</p>
-                                    </div>
-                                </div>
-                                <div className="flex">
-                                    <div className="shrink-0 ltr:mr-2 rtl:ml-2">
-                                        <div className="flex h-8 w-8 items-center justify-center rounded-full bg-dark text-white">
-                                            <IconServer className="h-4 w-4" />
-                                        </div>
-                                    </div>
-                                    <div>
-                                        <h5 className="font-semibold dark:text-white-light">Server rebooted successfully</h5>
-                                        <p className="text-xs text-white-dark">06 Apr, 2020</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </PerfectScrollbar> */}
                     </div>
                 </div>
             </div>
             <div className="mb-6">
-                <div className="panel h-full p-0 lg:col-span-2">
+                <div className="panel h-full p-0">
                     <div className="mb-5 flex items-start justify-between border-b border-white-light p-5 dark:border-[#1b2e4b] dark:text-white-light">
-                        <h5 className="text-lg font-semibold">Biodiversity Index (Shannon&apos;s Index)</h5>
+                        <h5 className="text-lg font-semibold">Biodiversity Index (Shannon's Index)</h5>
                         <div className="dropdown">
                             <Dropdown
                                 offset={[0, 5]}
@@ -883,7 +816,34 @@ const ComponentsDashboardAnalytics = () => {
                     {isMounted && <ReactApexChart options={shannonIndexData.options} series={shannonIndexData.series} type="bar" height={360} width={'100%'} />}
                 </div>
             </div>
-            <ComponentsDatatablesOrderSorting />
+            <div className="panel mt-6">
+              <h5 className="text-lg font-semibold mb-4">Bee Data Table</h5>
+              <input
+                type="text"
+                placeholder="Search..."
+                className="form-input mb-2"
+                value={search}
+                onChange={(e) => {
+                  setSearch(e.target.value);
+                  setPage(1);
+                }}
+              />
+              <DataTable
+                records={paginatedData.length > 0 ? paginatedData : []}
+                columns={beeColumns}
+                minHeight={200}
+                highlightOnHover
+                totalRecords={filteredData.length}
+                recordsPerPage={pageSize}
+                page={page}
+                onPageChange={setPage}
+                recordsPerPageOptions={PAGE_SIZES}
+                onRecordsPerPageChange={setPageSize}
+                paginationText={({ from, to, totalRecords }: { from: number; to: number; totalRecords: number }) =>
+                  `Showing ${from} to ${to} of ${totalRecords} entries`
+                }
+              />
+            </div>
         </div>
     );
 };

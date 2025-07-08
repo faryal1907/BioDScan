@@ -2,12 +2,56 @@ from fastapi import APIRouter, HTTPException
 from typing import List
 from app.models import BeeDataCreate, BeeDataResponse
 from app.database import bee_data_collection
+from app.mqtt_service import mqtt_service, BeeData as MQTTBeeData
 from datetime import datetime, timedelta
 from bson import ObjectId
 import random
 import math
 
 router = APIRouter()
+
+# Initialize MQTT connection on startup
+@router.on_event("startup")
+async def startup_event():
+    """Initialize MQTT connection when the app starts"""
+    try:
+        success = mqtt_service.connect()
+        if success:
+            # Subscribe to bee data topics
+            mqtt_service.subscribe("bio-d-scan/bee-data/#", handle_mqtt_bee_data)
+            print("MQTT service initialized successfully")
+        else:
+            print("Failed to initialize MQTT service")
+    except Exception as e:
+        print(f"Error initializing MQTT service: {e}")
+
+@router.on_event("shutdown")
+async def shutdown_event():
+    """Clean up MQTT connection when the app shuts down"""
+    mqtt_service.disconnect()
+
+async def handle_mqtt_bee_data(data: dict):
+    """Handle incoming MQTT bee data and store it in the database"""
+    try:
+        # Convert MQTT data to database format
+        bee_data = {
+            "hive_id": data.get("hive_id"),
+            "temperature": data.get("temperature"),
+            "humidity": data.get("humidity"),
+            "bumble_bee_count": data.get("bumble_bee_count"),
+            "honey_bee_count": data.get("honey_bee_count"),
+            "lady_bug_count": data.get("lady_bug_count"),
+            "location": data.get("location"),
+            "notes": data.get("notes"),
+            "timestamp": datetime.fromisoformat(data.get("timestamp")) if data.get("timestamp") else datetime.now()
+        }
+        
+        # Store in database
+        await bee_data_collection.insert_one(bee_data)
+        print(f"Stored MQTT bee data for hive: {bee_data.get('hive_id')}")
+        
+    except Exception as e:
+        print(f"Error handling MQTT bee data: {e}")
 
 # Sample data generator for bee monitoring
 def generate_sample_bee_data():
@@ -164,3 +208,74 @@ async def proxy_external_bee_data():
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Failed to generate sample data: {str(e)}")    
+
+# MQTT-related endpoints
+@router.get("/api/mqtt/status")
+async def get_mqtt_status():
+    """Get MQTT connection status"""
+    return {
+        "connected": mqtt_service.get_connection_status(),
+        "host": mqtt_service.host,
+        "port": mqtt_service.port,
+        "client_id": mqtt_service.client_id
+    }
+
+@router.post("/api/mqtt/publish")
+async def publish_mqtt_data(data: dict):
+    """Publish data to MQTT topic"""
+    try:
+        topic = data.get("topic", "bio-d-scan/default")
+        message = data.get("message", {})
+        
+        if not mqtt_service.get_connection_status():
+            raise HTTPException(status_code=503, detail="MQTT not connected")
+        
+        mqtt_service.publish(topic, message)
+        return {"message": "Data published successfully", "topic": topic}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish data: {str(e)}")
+
+@router.post("/api/mqtt/publish-bee-data")
+async def publish_bee_data_mqtt(data: BeeDataCreate):
+    """Publish bee data to MQTT"""
+    try:
+        if not mqtt_service.get_connection_status():
+            raise HTTPException(status_code=503, detail="MQTT not connected")
+        
+        # Convert to MQTT format
+        mqtt_data = MQTTBeeData(
+            hive_id=data.hive_id,
+            temperature=data.temperature,
+            humidity=data.humidity,
+            bumble_bee_count=data.bumble_bee_count,
+            honey_bee_count=data.honey_bee_count,
+            lady_bug_count=data.lady_bug_count,
+            location=data.location,
+            notes=data.notes,
+            timestamp=datetime.now().isoformat()
+        )
+        
+        mqtt_service.publish_bee_data(mqtt_data)
+        return {"message": "Bee data published to MQTT successfully"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to publish bee data: {str(e)}")
+
+@router.post("/api/mqtt/subscribe")
+async def subscribe_mqtt_topic(data: dict):
+    """Subscribe to MQTT topic"""
+    try:
+        topic = data.get("topic")
+        if not topic:
+            raise HTTPException(status_code=400, detail="Topic is required")
+        
+        if not mqtt_service.get_connection_status():
+            raise HTTPException(status_code=503, detail="MQTT not connected")
+        
+        # For now, we'll use a simple handler that logs messages
+        def message_handler(message_data):
+            print(f"Received message on {topic}: {message_data}")
+        
+        mqtt_service.subscribe(topic, message_handler)
+        return {"message": f"Subscribed to topic: {topic}"}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to subscribe: {str(e)}")    

@@ -1,7 +1,7 @@
 import React, { Fragment, useEffect, useState } from 'react';
 import Plot from 'react-plotly.js';
 
-const MapComponent = () => {
+const PopulationMap = () => {
     const [plotDimensions, setPlotDimensions] = useState({ width: 0, height: 0 });
     const [displayedFields, setDisplayedFields] = useState([]);
 
@@ -168,4 +168,4 @@ const MapComponent = () => {
     );
 };
 
-export default MapComponent;
+export default PopulationMap;

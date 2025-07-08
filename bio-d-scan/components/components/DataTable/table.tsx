@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { DataTable } from 'mantine-datatable';
 import { MagnifyingGlass } from 'react-loader-spinner';
+import mqttService, { BeeData } from '@/lib/mqtt';
 
 const ComponentsDatatablesOrderSorting = () => {
     const isRtl = useSelector((state) => state.themeConfig.rtlClass) === 'rtl';
@@ -14,6 +15,69 @@ const ComponentsDatatablesOrderSorting = () => {
     const [filterField, setFilterField] = useState('id'); // Default to 'id'
     const [sortStatus, setSortStatus] = useState({ columnAccessor: 'timestamp', direction: 'desc' });
     const [loading, setLoading] = useState(true);
+    const [mqttConnected, setMqttConnected] = useState(false);
+
+    // Handle real-time MQTT data
+    const handleMQTTData = (data: BeeData) => {
+        console.log('Received real-time MQTT data:', data);
+        
+        // Add the new data to the beginning of the records
+        const newRecord = {
+            id: data.id || `mqtt-${Date.now()}`,
+            hive_id: data.hive_id || 'MQTT-HIVE',
+            temperature: data.temperature,
+            humidity: data.humidity,
+            bumble_bee_count: data.bumble_bee_count,
+            honey_bee_count: data.honey_bee_count,
+            lady_bug_count: data.lady_bug_count,
+            location: data.location || 'MQTT Location',
+            notes: data.notes || 'Real-time data from MQTT',
+            timestamp: data.timestamp || new Date().toISOString(),
+        };
+        
+        setInitialRecords(prev => [newRecord, ...prev]);
+    };
+
+    // Set up MQTT connection and handlers
+    useEffect(() => {
+        const setupMQTT = async () => {
+            try {
+                await mqttService.connect();
+                setMqttConnected(true);
+                
+                // Subscribe to bee data topics
+                mqttService.subscribe('bio-d-scan/bee-data/#');
+                
+                // Set up message handler
+                mqttService.onMessage((message) => {
+                    try {
+                        const data = JSON.parse(message.payload);
+                        if (data.temperature !== undefined && data.humidity !== undefined) {
+                            handleMQTTData(data as BeeData);
+                        }
+                    } catch (error) {
+                        console.log('Message is not bee data format');
+                    }
+                });
+                
+                // Set up connection status handler
+                mqttService.onConnectionChange((connected) => {
+                    setMqttConnected(connected);
+                });
+                
+            } catch (error) {
+                console.error('Failed to connect to MQTT:', error);
+                setMqttConnected(false);
+            }
+        };
+        
+        setupMQTT();
+        
+        // Cleanup on unmount
+        return () => {
+            mqttService.disconnect();
+        };
+    }, []);
 
     // Fetch data from /api/external-bee-data
     useEffect(() => {
@@ -98,7 +162,15 @@ const ComponentsDatatablesOrderSorting = () => {
                 <>
                     <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
                         <h5 className="text-lg font-semibold dark:text-white-light">Bee Data Records</h5>
-                        <div className="ltr:ml-auto rtl:mr-auto flex gap-2">
+                        <div className="ltr:ml-auto rtl:mr-auto flex gap-2 items-center">
+                            {/* MQTT Status Indicator */}
+                            <div className="flex items-center gap-2 mr-4">
+                                <div className={`w-2 h-2 rounded-full ${mqttConnected ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                                <span className="text-xs text-gray-600 dark:text-gray-400">
+                                    MQTT {mqttConnected ? 'Connected' : 'Disconnected'}
+                                </span>
+                            </div>
+                            
                             <select
                                 value={filterField}
                                 onChange={(e) => setFilterField(e.target.value)}
