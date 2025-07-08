@@ -54,7 +54,7 @@ const ComponentsDashboardAnalytics = () => {
         const fetchBeeData = async () => {
             setLoadingBeeData(true);
             try {
-                const response = await fetch('/api/external-bee-data');
+                const response = await fetch('https://biodscan-production.up.railway.app/api/external-bee-data');
                 const result = await response.json();
                 setBeeData(result.data || []);
             } catch (error) {
