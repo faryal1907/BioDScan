@@ -694,20 +694,20 @@ const ComponentsDashboardAnalytics = () => {
                     </div>
 
                     <div className="panel h-full p-0 sm:col-span-2 xl:col-span-2">
-                        <div className="flex p-5">
-                            <h5 className="text-lg font-semibold dark:text-white-light">Sustainability trends of the biodiversity</h5>
+                        <div className="flex flex-col p-3 sm:p-5">
+                            <h5 className="text-base sm:text-lg font-semibold dark:text-white-light">Sustainability trends of the biodiversity</h5>
                         </div>
-                        <div className="flex pr-5 pl-5 w-full items-center justify-between">
-                            <div className="flex">
-                                <div className="flex h-16 w-16 overflow-hidden shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-primary dark:text-white-light">
-                                    <Image className="w-16 h-16" src="/assets/images/Dashboard/Home/honeybee1.jpg" alt="Honey Bee" height={64} width={64} />
+                        <div className="flex flex-col sm:flex-row pr-3 pl-3 sm:pr-5 sm:pl-5 w-full items-start sm:items-center justify-between gap-3 sm:gap-0">
+                            <div className="flex items-center">
+                                <div className="flex h-12 w-12 sm:h-16 sm:w-16 overflow-hidden shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary dark:bg-primary dark:text-white-light">
+                                    <img alt="Honey Bee" loading="lazy" width="48" height="48" decoding="async" data-nimg="1" className="w-12 h-12 sm:w-16 sm:h-16" srcSet="/_next/image?url=%2Fassets%2Fimages%2FDashboard%2FHome%2Fhoneybee1.jpg&w=64&q=75 1x, /_next/image?url=%2Fassets%2Fimages%2FDashboard%2FHome%2Fhoneybee1.jpg&w=128&q=75 2x" src="/_next/image?url=%2Fassets%2Fimages%2FDashboard%2FHome%2Fhoneybee1.jpg&w=128&q=75" style={{ color: 'transparent' }} />
                                 </div>
-                                <div className="font-semibold ltr:ml-3 rtl:mr-3">
-                                    <p className="text-xl dark:text-white-light">31.6K</p>
-                                    <h5 className="text-lg text-[#506690]">Honey Bee</h5>
+                                <div className="font-semibold ltr:ml-2 sm:ltr:ml-3 rtl:mr-2 sm:rtl:mr-3">
+                                    <p className="text-base sm:text-xl dark:text-white-light">31.6K</p>
+                                    <h5 className="text-sm sm:text-lg text-[#506690]">Honey Bee</h5>
                                 </div>
                             </div>
-                            <div className="dropdown">
+                            <div className="dropdown self-end sm:self-auto">
                                 <Dropdown
                                     offset={[0, 5]}
                                     placement={`${isRtl ? 'bottom-start' : 'bottom-end'}`}
@@ -728,7 +728,8 @@ const ComponentsDashboardAnalytics = () => {
                                 </Dropdown>
                             </div>
                         </div>
-                        <div>{isMounted && <ReactApexChart className="absolute bottom-0 w-full" series={areaChart.series} options={areaChart.options} type="area" height={200} width={'100%'} />}</div>
+                        <div className="relative w-full min-h-[180px] sm:min-h-[215px]">
+                            {isMounted && <ReactApexChart className="absolute bottom-0 w-full" series={areaChart.series} options={areaChart.options} type="area" height={200} width={'100%'} />}</div>
                     </div>
                 </div>
 
