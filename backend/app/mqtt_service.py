@@ -1,12 +1,14 @@
+import ssl
 import json
 import logging
 import os
 from datetime import datetime
 from typing import Dict, Any, Callable, Optional
 from dotenv import load_dotenv
-load_dotenv()
-import ssl
+import uuid
+import time  # also needed because you use time.sleep
 
+load_dotenv()
 
 import paho.mqtt.client as mqtt
 from pydantic import BaseModel
@@ -16,16 +18,30 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 class BeeData(BaseModel):
-    id: Optional[str] = None
-    hive_id: Optional[str] = None
-    temperature: float
-    humidity: float
-    bumble_bee_count: int
-    honey_bee_count: int
-    lady_bug_count: int
-    location: Optional[str] = None
-    notes: Optional[str] = None
-    timestamp: str
+    date: str  # e.g., "2025-07-09"
+    time: str  # e.g., "21:40:19"
+    bumble_bee: int
+    honey_bee: int
+    lady_bug: int
+    total_count: int
+    temperature_c: float
+    humidity_percent: float
+    location: str
+
+    @classmethod
+    def from_raw(cls, raw: Dict[str, Any]):
+        return cls(
+            date=raw["Date"],
+            time=raw["Time"],
+            bumble_bee=raw["Bumble Bee"],
+            honey_bee=raw["Honey Bee"],
+            lady_bug=raw["Lady Bug"],
+            total_count=raw["Total Count"],
+            temperature_c=raw["Temperature (C)"],
+            humidity_percent=raw["Humidity (%)"],
+            location=raw["Location"]
+        )
+
 
 class MQTTService:
     def __init__(self):
