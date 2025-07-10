@@ -32,36 +32,26 @@ const Hero = () => {
                 </div>
             </div>
 
-            {/* Feature Cards */}
-            <div className="relative container mx-auto px-4 py-12 flex flex-wrap justify-start gap-8 z-10">
-                {/* Card 1 */}
-                <div className="w-full sm:w-1/2 lg:w-1/4 bg-white bg-opacity-30 backdrop-blur-lg p-6 rounded-md">
-                    <div className="flex items-center space-x-4">
-                        <div className="text-yellow-500 text-4xl">
-                            <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L15 12l-5.25-5"></path>
-                            </svg>
+            <div className="my-[50px] md:my-0 relative container mx-auto px-4 py-12 flex flex-row flex-nowrap overflow-x-auto justify-start gap-4 z-10">
+                <div className="w-1/2 min-w-[220px] lg:w-1/4 bg-white bg-opacity-30 backdrop-blur-lg p-3 lg:p-6 rounded-md">
+                    <div className="flex items-center space-x-2 lg:space-x-4">
+                        <div className="text-yellow-500 text-2xl lg:text-4xl">
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L15 12l-5.25-5"></path></svg>
                         </div>
                         <div>
-                            <h3 className="text-xl font-semibold mb-1 text-white">High Technology</h3>
-                            <p className="text-white">We employ cutting-edge sensors and data analytics to track bee activity, population trends, and environmental conditions in real time.</p>
+                            <h3 className="text-sm lg:text-xl font-semibold mb-1 text-white">High Technology</h3>
+                            <p className="text-xs lg:text-base text-white">We employ cutting-edge sensors and data analytics to track bee activity, population trends, and environmental conditions in real time.</p>
                         </div>
                     </div>
                 </div>
-
-                {/* Card 2 */}
-                <div className="w-full sm:w-1/2 lg:w-1/4 bg-white bg-opacity-30 backdrop-blur-lg p-6 rounded-md">
-                    <div className="flex items-center space-x-4">
-                        <div className="text-yellow-500 text-4xl">
-                            <svg className="w-8 h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                                <path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L15 12l-5.25-5"></path>
-                            </svg>
+                <div className="w-1/2 min-w-[220px] lg:w-1/4 bg-white bg-opacity-30 backdrop-blur-lg p-3 lg:p-6 rounded-md">
+                    <div className="flex items-center space-x-2 lg:space-x-4">
+                        <div className="text-yellow-500 text-2xl lg:text-4xl">
+                            <svg className="w-6 h-6 lg:w-8 lg:h-8" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" d="M9.75 17L15 12l-5.25-5"></path></svg>
                         </div>
                         <div>
-                            <h3 className="text-xl font-semibold mb-1 text-white">Quality Product</h3>
-                            <p className="text-white">
-                                All our honey comes from carefully monitored hives, ensuring top-tier taste and nutrition while preserving biodiversity and healthy ecosystems.
-                            </p>
+                            <h3 className="text-sm lg:text-xl font-semibold mb-1 text-white">Quality Product</h3>
+                            <p className="text-xs lg:text-base text-white">All our honey comes from carefully monitored hives, ensuring top-tier taste and nutrition while preserving biodiversity and healthy ecosystems.</p>
                         </div>
                     </div>
                 </div>

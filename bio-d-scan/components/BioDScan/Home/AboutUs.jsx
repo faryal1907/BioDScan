@@ -4,7 +4,7 @@ const AboutUsSection = () => {
     return (
         <section className="container mx-auto px-4 py-12">
             {/* Top content (heading, subheading, button) */}
-            <div className="flex flex-col md:flex-row items-start md:items-center mb-10">
+            <div className="mt-[50px] md:mt-0 flex flex-col md:flex-row items-start md:items-center mb-10">
                 {/* Left Text Content */}
                 <div className="w-full md:w-1/2 mb-6 md:mb-0 md:pr-8">
                     <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-800">We Collect Vital Data to Protect Bees & Ecosystems</h2>
@@ -24,20 +24,16 @@ const AboutUsSection = () => {
                 </div>
             </div>
 
+
             {/* Image & Card Section */}
             <div className="flex flex-col md:flex-row gap-6">
-                {/* Honeycomb Image */}
-                <div className="w-full md:w-1/3">
-                    <img src="/assets/images/HomePage/working-bees.jpg" alt="Close-up of honeycomb with bees" className="w-full h-auto rounded shadow" />
-                </div>
-
                 {/* Beekeeper Image */}
-                <div className="w-full md:w-1/3">
+                <div className="w-full md:w-1/2">
                     <img src="/assets/images/HomePage/beekeeper-working-on-beehive.jpg" alt="Beekeeper inspecting hive" className="w-full h-auto rounded shadow" />
                 </div>
 
                 {/* "100% Organic" Card (you can rename or repurpose this section) */}
-                <div className="w-full md:w-1/3 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-md flex flex-col justify-center shadow">
+                <div className="w-full md:w-1/2 bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-md flex flex-col justify-center shadow">
                     <div className="flex items-center mb-4">
                         {/* Icon */}
                         <div className="text-yellow-500 text-3xl mr-3">

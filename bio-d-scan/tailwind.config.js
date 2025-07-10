@@ -61,6 +61,9 @@ module.exports = {
                     light: '#e0e6ed',
                     dark: '#888ea8',
                 },
+                customyellow: {
+                    DEFAULT: '#F5B800',
+                },
             },
             fontFamily: {
                 nunito: ['var(--font-nunito)'],
