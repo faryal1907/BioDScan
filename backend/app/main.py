@@ -1,32 +1,32 @@
-import json
-import logging
 import os
-import random
+import json
 import uuid
-from datetime import datetime
-from typing import Dict, Any, Optional, List
-from threading import Thread
+import certifi
+import logging
 import asyncio
+import random
+from datetime import datetime
+from typing import List, Optional, Dict, Any
 
-import paho.mqtt.client as mqtt
+
+
+from dotenv import load_dotenv
 from fastapi import FastAPI
-from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from motor.motor_asyncio import AsyncIOMotorClient
 from pymongo.errors import ConnectionFailure
-from dotenv import load_dotenv
-
-# Configure logging
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+import paho.mqtt.client as mqtt
+from fastapi.middleware.cors import CORSMiddleware
 
 # Load environment variables
 load_dotenv()
-logger.info("Loaded environment variables from .env file")
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
+# FastAPI app
 app = FastAPI(title="Bio-D-Scan Backend API", version="1.0.0")
 
-# Enable CORS for Next.js frontend
+# CORS
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -35,26 +35,53 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# MongoDB configuration
-MONGODB_URL = os.getenv("MONGODB_URL", "mongodb+srv://fkalibscs23seecs:Family%2A9366@cluster00.qjanftu.mongodb.net/bio-d-scan?retryWrites=true&w=majority")
+# Environment Variables
+MONGODB_URL = os.getenv("MONGODB_URL")
 DATABASE_NAME = os.getenv("DATABASE_NAME", "bee_monitoring")
 
-# HiveMQ configuration
-BROKER = os.getenv("MQTT_HOST", "0a4da080df9b471da9fe248f9965857e.s1.eu.hivemq.cloud")
+BROKER = os.getenv("MQTT_HOST")
 PORT = int(os.getenv("MQTT_PORT", 8883))
 TOPIC = os.getenv("MQTT_TOPIC", "sensors/bee-data")
-USERNAME = os.getenv("MQTT_USERNAME", "faryal1907")
-PASSWORD = os.getenv("MQTT_PASSWORD", "Family%2A9366")
+USERNAME = os.getenv("MQTT_USERNAME")
+PASSWORD = os.getenv("MQTT_PASSWORD")
 
-# Global MongoDB client and event loop
-mongodb_client = None
+# Globals
+mongodb_client = AsyncIOMotorClient(MONGODB_URL, tlsCAFile=certifi.where())
 database = None
 loop = asyncio.get_event_loop()
 
-# Pydantic model
+
+# MongoDB Connection
+async def connect_to_mongodb():
+    global mongodb_client, database
+    try:
+        logger.info(f"Connecting to MongoDB at {MONGODB_URL}")
+        mongodb_client = AsyncIOMotorClient(
+            MONGODB_URL,
+            serverSelectionTimeoutMS=5000,
+            tls=True,
+            tlsCAFile=certifi.where()
+        )
+        await mongodb_client.admin.command("ping")
+        logger.info("✅ Connected to MongoDB successfully")
+        database = mongodb_client[DATABASE_NAME]
+    except ConnectionFailure as e:
+        logger.error(f"❌ MongoDB connection failure: {e}")
+        database = None
+    except Exception as e:
+        logger.error(f"❌ Unexpected MongoDB error: {e}")
+        database = None
+
+async def close_mongodb_connection():
+    global mongodb_client
+    if mongodb_client:
+        mongodb_client.close()
+        logger.info("MongoDB connection closed")
+
+# Pydantic Model
 class BeeData(BaseModel):
     id: Optional[str] = None
-    hive_id: Optional[str] = None
+    hive_id: Optional[str]
     temperature: float
     humidity: float
     bumble_bee_count: int
@@ -64,47 +91,53 @@ class BeeData(BaseModel):
     notes: Optional[str] = None
     timestamp: Optional[str] = None
 
+# Save Sensor Data
+async def save_sensor_data_to_db(bee_data: BeeData):
+    try:
+        if database:
+            collection = database.bee_data
+            if not (10 <= bee_data.temperature <= 30 and 30 <= bee_data.humidity <= 90):
+                logger.warning("❌ Invalid data skipped")
+                return
+            result = await collection.insert_one(bee_data.dict(exclude={'id'}))
+            logger.info(f"✅ Sensor data saved to MongoDB with ID: {result.inserted_id}")
+        else:
+            logger.warning("❌ MongoDB unavailable")
+    except Exception as e:
+        logger.error(f"❌ Error saving to DB: {e}")
+
 # MQTT Service
 class MQTTService:
     def __init__(self):
-        self.client = mqtt.Client(client_id=f"bio-d-scan-backend-{uuid.uuid4().hex[:8]}")
+        self.client = mqtt.Client(client_id=f"bio-d-scan-{uuid.uuid4().hex[:8]}")
         self.is_connected = False
         self.client.username_pw_set(USERNAME, PASSWORD)
         self.client.tls_set()
         self.client.on_connect = self._on_connect
         self.client.on_disconnect = self._on_disconnect
         self.client.on_message = self._on_message
-        self.client.on_publish = self._on_publish
 
     def _on_connect(self, client, userdata, flags, rc):
         if rc == 0:
-            logger.info("Connected to HiveMQ successfully")
+            logger.info("✅ Connected to HiveMQ successfully")
             self.is_connected = True
             self.client.subscribe(TOPIC, qos=1)
         else:
-            logger.error(f"Connection failed with code {rc}")
-            self.is_connected = False
+            logger.error(f"❌ HiveMQ connection failed with code {rc}")
 
     def _on_disconnect(self, client, userdata, rc):
-        logger.info(f"Disconnected from HiveMQ (code: {rc})")
+        logger.warning(f"🔌 Disconnected from HiveMQ with code {rc}")
         self.is_connected = False
 
     def _on_message(self, client, userdata, msg):
         try:
             data = json.loads(msg.payload.decode())
-            logger.info(f"Received: {data}")
             bee_data = BeeData(**data)
             if not bee_data.timestamp:
-                bee_data.timestamp = datetime.now().isoformat()
-            # Run async save in the correct event loop
+                bee_data.timestamp = datetime.utcnow().isoformat()
             asyncio.run_coroutine_threadsafe(save_sensor_data_to_db(bee_data), loop)
-        except json.JSONDecodeError:
-            logger.error("Failed to decode message")
         except Exception as e:
-            logger.error(f"Error processing message: {e}")
-
-    def _on_publish(self, client, userdata, mid):
-        logger.debug(f"Message published with ID: {mid}")
+            logger.error(f"❌ MQTT message error: {e}")
 
     def connect(self):
         try:
@@ -112,14 +145,11 @@ class MQTTService:
             self.client.connect(BROKER, PORT, 60)
             self.client.loop_start()
         except Exception as e:
-            logger.error(f"Failed to connect to MQTT broker: {e}")
-            self.is_connected = False
+            logger.error(f"❌ Failed to connect to MQTT broker: {e}")
 
     def disconnect(self):
         self.client.loop_stop()
         self.client.disconnect()
-        self.is_connected = False
-        logger.info("Disconnected from MQTT broker")
 
     def publish(self, topic: str, data: Dict[str, Any]):
         if self.is_connected:
@@ -127,56 +157,17 @@ class MQTTService:
                 payload = json.dumps(data)
                 result = self.client.publish(topic, payload, qos=1)
                 if result.rc == mqtt.MQTT_ERR_SUCCESS:
-                    logger.info(f"Published to {topic}: {payload}")
+                    logger.info(f"📡 Published to {topic}: {payload}")
                 else:
-                    logger.error(f"Failed to publish to {topic}, error code: {result.rc}")
+                    logger.error("❌ Publish failed")
             except Exception as e:
-                logger.error(f"Error publishing to {topic}: {e}")
+                logger.error(f"❌ Publish error: {e}")
         else:
-            logger.error("Not connected to MQTT broker")
+            logger.warning("⚠️ MQTT not connected")
 
-# Initialize MQTT service
 mqtt_service = MQTTService()
 
-# MongoDB connection functions
-async def connect_to_mongodb():
-    global mongodb_client, database
-    try:
-        logger.info(f"Connecting to MongoDB at {MONGODB_URL}")
-        mongodb_client = AsyncIOMotorClient(MONGODB_URL, serverSelectionTimeoutMS=5000)
-        await mongodb_client.admin.command('ping')
-        logger.info("Connected to MongoDB successfully")
-        database = mongodb_client[DATABASE_NAME]
-        logger.info(f"Using database: {DATABASE_NAME}")
-    except ConnectionFailure as e:
-        logger.error(f"Failed to connect to MongoDB: {e}")
-        database = None
-    except Exception as e:
-        logger.error(f"Unexpected error connecting to MongoDB: {e}")
-        database = None
-
-async def close_mongodb_connection():
-    global mongodb_client
-    if mongodb_client:
-        mongodb_client.close()
-        logger.info("MongoDB connection closed")
-
-async def save_sensor_data_to_db(bee_data: BeeData):
-    try:
-        if database is not None:
-            collection = database.bee_data
-            # Validate data before saving
-            if not (10 <= bee_data.temperature <= 30 and 30 <= bee_data.humidity <= 90):
-                logger.warning(f"Invalid data not saved: {bee_data.dict()}")
-                return
-            result = await collection.insert_one(bee_data.dict(exclude={'id'}))
-            logger.info(f"Sensor data saved to MongoDB with ID: {result.inserted_id}")
-        else:
-            logger.warning("MongoDB not available, skipping save")
-    except Exception as e:
-        logger.error(f"Error saving sensor data to database: {e}")
-
-# Generate realistic bee data
+# Simulated Bee Data
 def generate_bee_data(num_records: int = 5) -> List[Dict[str, Any]]:
     records = []
     now = datetime.utcnow()
@@ -200,110 +191,62 @@ def generate_bee_data(num_records: int = 5) -> List[Dict[str, Any]]:
         })
     return records
 
-# API endpoints
+# API Routes
 @app.get("/")
-async def read_root():
-    return {"message": "Bio-D-Scan Backend API", "version": "1.0.0"}
-
-@app.get("/health")
-async def health_check():
-    mongodb_status = "connected" if database is not None else "disconnected"
-    return {
-        "status": "healthy",
-        "mqtt_connected": mqtt_service.is_connected,
-        "mongodb_connected": mongodb_status,
-        "timestamp": datetime.now().isoformat()
-    }
+async def home():
+    return {"message": "Bio-D-Scan API Running"}
 
 @app.get("/api/bee-data", response_model=List[BeeData])
 async def get_bee_data(limit: int = 10):
     try:
-        if database is None:
-            logger.warning("MongoDB not available, returning empty data")
-            return []
-        collection = database.bee_data
-        cursor = collection.find().sort("timestamp", -1).limit(limit)
-        results = await cursor.to_list(length=limit)
-        formatted_results = []
-        for result in results:
-            if not (10 <= result.get("temperature", 0) <= 30 and 30 <= result.get("humidity", 0) <= 90):
-                logger.warning(f"Skipping invalid MongoDB record: {result}")
-                continue
-            formatted_result = {
-                "id": str(result["_id"]),
-                "hive_id": result.get("hive_id", "unknown"),
-                "temperature": result.get("temperature", 0),
-                "humidity": result.get("humidity", 0),
-                "bumble_bee_count": result.get("bumble_bee_count", 0),
-                "honey_bee_count": result.get("honey_bee_count", 0),
-                "lady_bug_count": result.get("lady_bug_count", 0),
-                "location": result.get("location", ""),
-                "notes": result.get("notes", ""),
-                "timestamp": result.get("timestamp", "")
-            }
-            formatted_results.append(formatted_result)
-        return formatted_results
+        if database:
+            collection = database.bee_data
+            cursor = collection.find().sort("timestamp", -1).limit(limit)
+            docs = await cursor.to_list(length=limit)
+            return [
+                BeeData(
+                    id=str(doc["_id"]),
+                    hive_id=doc.get("hive_id", ""),
+                    temperature=doc.get("temperature", 0),
+                    humidity=doc.get("humidity", 0),
+                    bumble_bee_count=doc.get("bumble_bee_count", 0),
+                    honey_bee_count=doc.get("honey_bee_count", 0),
+                    lady_bug_count=doc.get("lady_bug_count", 0),
+                    location=doc.get("location", ""),
+                    notes=doc.get("notes", ""),
+                    timestamp=doc.get("timestamp", "")
+                )
+                for doc in docs if 10 <= doc.get("temperature", 0) <= 30 and 30 <= doc.get("humidity", 0) <= 90
+            ]
     except Exception as e:
-        logger.error(f"Error getting bee data: {e}")
-        return []
+        logger.error(f"❌ Failed to get bee data: {e}")
+    return []
 
 @app.get("/api/external-bee-data", response_model=Dict[str, Any])
-async def get_external_bee_data(limit: int = 10):
-    try:
-        # Generate and publish multiple records
-        records = generate_bee_data(num_records=5)
-        for data in records:
-            mqtt_service.publish(TOPIC, data)
-            logger.info(f"Generated and published data: {data}")
+async def publish_and_return_data():
+    data = generate_bee_data()
+    for d in data:
+        mqtt_service.publish(TOPIC, d)
+    await asyncio.sleep(1)
+    return {"success": True, "data": data}
 
-        # Wait briefly for MQTT messages to be processed
-        await asyncio.sleep(0.5)
-
-        # Fetch from MongoDB
-        if database is None:
-            logger.warning("MongoDB not available, returning generated data")
-            return {"success": True, "data": records, "count": len(records), "timestamp": datetime.now().isoformat()}
-        
-        collection = database.bee_data
-        cursor = collection.find().sort("timestamp", -1).limit(limit)
-        results = await cursor.to_list(length=limit)
-        formatted_results = []
-        for result in results:
-            if not (10 <= result.get("temperature", 0) <= 30 and 30 <= result.get("humidity", 0) <= 90):
-                logger.warning(f"Skipping invalid MongoDB record: {result}")
-                continue
-            formatted_result = {
-                "id": str(result["_id"]),
-                "hive_id": result.get("hive_id", "unknown"),
-                "temperature": result.get("temperature", 0),
-                "humidity": result.get("humidity", 0),
-                "bumble_bee_count": result.get("bumble_bee_count", 0),
-                "honey_bee_count": result.get("honey_bee_count", 0),
-                "lady_bug_count": result.get("lady_bug_count", 0),
-                "location": result.get("location", ""),
-                "notes": result.get("notes", ""),
-                "timestamp": result.get("timestamp", "")
-            }
-            formatted_results.append(formatted_result)
-        
-        return {
-            "success": True,
-            "data": formatted_results,
-            "count": len(formatted_results),
-            "timestamp": datetime.now().isoformat()
-        }
-    except Exception as e:
-        logger.error(f"Error getting external bee data: {e}")
-        return {"success": False, "error": str(e), "data": [], "count": 0}
+@app.get("/health")
+async def health_check():
+    return {
+        "status": "healthy",
+        "mqtt_connected": mqtt_service.is_connected,
+        "mongodb_connected": database is not None,
+        "timestamp": datetime.utcnow().isoformat()
+    }
 
 @app.on_event("startup")
-async def startup_event():
-    logger.info("Starting Bio-D-Scan backend...")
+async def on_startup():
+    logger.info("🚀 Starting backend...")
     await connect_to_mongodb()
     mqtt_service.connect()
 
 @app.on_event("shutdown")
-async def shutdown_event():
-    logger.info("Shutting down Bio-D-Scan backend...")
+async def on_shutdown():
+    logger.info("🛑 Shutting down backend...")
     await close_mongodb_connection()
     mqtt_service.disconnect()
