@@ -28,6 +28,7 @@ import Image from 'next/image';
 import dynamic from 'next/dynamic';
 import { ApexOptions } from 'apexcharts';
 import { DataTable } from 'mantine-datatable';
+import BeeDataTable from '@/components/components/DataTable/table';
 
 const PAGE_SIZES = [10, 20, 30, 50, 100];
 
@@ -43,22 +44,18 @@ const ComponentsDashboardAnalytics = () => {
     const [bioSusBee, setBioSusBee] = useState(false);
 
     // Fetch bee/environmental data from the API
-    const [beeData, setBeeData] = useState([]);
     const [loadingBeeData, setLoadingBeeData] = useState(true);
-    const [page, setPage] = useState(1);
-    const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [search, setSearch] = useState('');
 
     useEffect(() => {
         setIsMounted(true);
         const fetchBeeData = async () => {
             setLoadingBeeData(true);
             try {
-                const response = await fetch('https://biodscan-production.up.railway.app/api/external-bee-data');
+                const response = await fetch('/api/external-bee-data');
                 const result = await response.json();
-                setBeeData(result.data || []);
+                // setBeeData(result.data || []); // This line is removed as per the edit hint
             } catch (error) {
-                setBeeData([]);
+                // setBeeData([]); // This line is removed as per the edit hint
             } finally {
                 setLoadingBeeData(false);
             }
@@ -67,178 +64,178 @@ const ComponentsDashboardAnalytics = () => {
     }, []);
 
     // Filter and paginate
-    const filteredData = beeData.filter((item) =>
-      Object.values(item).some((val) =>
-        String(val).toLowerCase().includes(search.toLowerCase())
-      )
-    );
-    const from = (page - 1) * pageSize;
-    const to = from + pageSize;
-    const paginatedData = filteredData.slice(from, to);
+    // const filteredData = beeData.filter((item) =>
+    //   Object.values(item).some((val) =>
+    //     String(val).toLowerCase().includes(search.toLowerCase())
+    //   )
+    // );
+    // const from = (page - 1) * pageSize;
+    // const to = from + pageSize;
+    // const paginatedData = filteredData.slice(from, to);
 
-    const beeColumns = [
-      { accessor: 'id', title: 'ID' },
-      { accessor: 'hive_id', title: 'Hive ID' },
-      { accessor: 'temperature', title: 'Temperature (°C)' },
-      { accessor: 'humidity', title: 'Humidity (%)' },
-      { accessor: 'bumble_bee_count', title: 'Bumble Bee Count' },
-      { accessor: 'honey_bee_count', title: 'Honey Bee Count' },
-      { accessor: 'lady_bug_count', title: 'Ladybug Count' },
-      { accessor: 'location', title: 'Location' },
-      { accessor: 'notes', title: 'Notes' },
-      { accessor: 'timestamp', title: 'Timestamp', render: (record: Record<string, any>) => new Date(record.timestamp).toLocaleString() },
-    ];
+    // const beeColumns = [
+    //   { accessor: 'id', title: 'ID' },
+    //   { accessor: 'hive_id', title: 'Hive ID' },
+    //   { accessor: 'temperature', title: 'Temperature (°C)' },
+    //   { accessor: 'humidity', title: 'Humidity (%)' },
+    //   { accessor: 'bumble_bee_count', title: 'Bumble Bee Count' },
+    //   { accessor: 'honey_bee_count', title: 'Honey Bee Count' },
+    //   { accessor: 'lady_bug_count', title: 'Ladybug Count' },
+    //   { accessor: 'location', title: 'Location' },
+    //   { accessor: 'notes', title: 'Notes' },
+    //   { accessor: 'timestamp', title: 'Timestamp', render: (record: Record<string, any>) => new Date(record.timestamp).toLocaleString() },
+    // ];
 
-    const beesData = {
-        'Honey Bee': {
-            count: '31.6K',
-            icon: '/assets/images/Dashboard/Home/honeybee1.jpg',
-            bgClass: 'bg-primary/10',
-            textClass: 'text-primary',
-            chart: {
-                type: 'area',
-                height: 160,
-                width: '100%',
-                series: [
-                    {
-                        data: [38, 60, 38, 52, 36, 40, 28],
-                    },
-                ],
-                options: {
-                    chart: {
-                        height: 160,
-                        type: 'area',
-                        fontFamily: 'Nunito, sans-serif',
-                        sparkline: {
-                            enabled: true,
-                        },
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2,
-                    },
-                    colors: ['#4361ee'],
-                    grid: {
-                        padding: {
-                            top: 5,
-                        },
-                    },
-                    yaxis: {
-                        show: false,
-                    },
-                    tooltip: {
-                        x: {
-                            show: false,
-                        },
-                        y: {
-                            title: {
-                                formatter: () => '',
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        'Lady Bug': {
-            count: '1,900',
-            icon: '/assets/images/Dashboard/Home/beetle-ladybug.jpg',
-            bgClass: 'bg-danger/10',
-            textClass: 'text-danger',
-            chart: {
-                type: 'area',
-                height: 160,
-                width: '100%',
-                series: [
-                    {
-                        data: [60, 28, 52, 38, 40, 36, 38],
-                    },
-                ],
-                options: {
-                    chart: {
-                        height: 160,
-                        type: 'area',
-                        fontFamily: 'Nunito, sans-serif',
-                        sparkline: {
-                            enabled: true,
-                        },
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2,
-                    },
-                    colors: ['#e7515a'],
-                    grid: {
-                        padding: {
-                            top: 5,
-                        },
-                    },
-                    yaxis: {
-                        show: false,
-                    },
-                    tooltip: {
-                        x: {
-                            show: false,
-                        },
-                        y: {
-                            title: {
-                                formatter: () => '',
-                            },
-                        },
-                    },
-                },
-            },
-        },
-        'Bumble Bee': {
-            count: '2,200',
-            icon: '/assets/images/Dashboard/Home/bumblebee1.jpg',
-            bgClass: 'bg-success/10',
-            textClass: 'text-success',
-            chart: {
-                type: 'area',
-                height: 160,
-                width: '100%',
-                series: [
-                    {
-                        name: 'Sales',
-                        data: [28, 50, 36, 60, 38, 52, 38],
-                    },
-                ],
-                options: {
-                    chart: {
-                        height: 160,
-                        type: 'area',
-                        fontFamily: 'Nunito, sans-serif',
-                        sparkline: {
-                            enabled: true,
-                        },
-                    },
-                    stroke: {
-                        curve: 'smooth',
-                        width: 2,
-                    },
-                    colors: ['#1abc9c'],
-                    grid: {
-                        padding: {
-                            top: 5,
-                        },
-                    },
-                    yaxis: {
-                        show: false,
-                    },
-                    tooltip: {
-                        x: {
-                            show: false,
-                        },
-                        y: {
-                            title: {
-                                formatter: () => '',
-                            },
-                        },
-                    },
-                },
-            },
-        },
-    };
+    // const beesData = {
+    //     'Honey Bee': {
+    //         count: '31.6K',
+    //         icon: '/assets/images/Dashboard/Home/honeybee1.jpg',
+    //         bgClass: 'bg-primary/10',
+    //         textClass: 'text-primary',
+    //         chart: {
+    //             type: 'area',
+    //             height: 160,
+    //             width: '100%',
+    //             series: [
+    //                 {
+    //                     data: [38, 60, 38, 52, 36, 40, 28],
+    //                 },
+    //             ],
+    //             options: {
+    //                 chart: {
+    //                     height: 160,
+    //                     type: 'area',
+    //                     fontFamily: 'Nunito, sans-serif',
+    //                     sparkline: {
+    //                         enabled: true,
+    //                     },
+    //                 },
+    //                 stroke: {
+    //                     curve: 'smooth',
+    //                     width: 2,
+    //                 },
+    //                 colors: ['#4361ee'],
+    //                 grid: {
+    //                     padding: {
+    //                         top: 5,
+    //                     },
+    //                 },
+    //                 yaxis: {
+    //                     show: false,
+    //                 },
+    //                 tooltip: {
+    //                     x: {
+    //                         show: false,
+    //                     },
+    //                     y: {
+    //                         title: {
+    //                             formatter: () => '',
+    //                         },
+    //                     },
+    //                 },
+    //             },
+    //         },
+    //     },
+    //     'Lady Bug': {
+    //         count: '1,900',
+    //         icon: '/assets/images/Dashboard/Home/beetle-ladybug.jpg',
+    //         bgClass: 'bg-danger/10',
+    //         textClass: 'text-danger',
+    //         chart: {
+    //             type: 'area',
+    //             height: 160,
+    //             width: '100%',
+    //             series: [
+    //                 {
+    //                     data: [60, 28, 52, 38, 40, 36, 38],
+    //                 },
+    //             ],
+    //             options: {
+    //                 chart: {
+    //                     height: 160,
+    //                     type: 'area',
+    //                     fontFamily: 'Nunito, sans-serif',
+    //                     sparkline: {
+    //                         enabled: true,
+    //                     },
+    //                 },
+    //                 stroke: {
+    //                     curve: 'smooth',
+    //                     width: 2,
+    //                 },
+    //                 colors: ['#e7515a'],
+    //                 grid: {
+    //                     padding: {
+    //                         top: 5,
+    //                     },
+    //                 },
+    //                 yaxis: {
+    //                     show: false,
+    //                 },
+    //                 tooltip: {
+    //                     x: {
+    //                         show: false,
+    //                     },
+    //                     y: {
+    //                         title: {
+    //                             formatter: () => '',
+    //                         },
+    //                     },
+    //                 },
+    //             },
+    //         },
+    //     },
+    //     'Bumble Bee': {
+    //         count: '2,200',
+    //         icon: '/assets/images/Dashboard/Home/bumblebee1.jpg',
+    //         bgClass: 'bg-success/10',
+    //         textClass: 'text-success',
+    //         chart: {
+    //             type: 'area',
+    //             height: 160,
+    //             width: '100%',
+    //             series: [
+    //                 {
+    //                     name: 'Sales',
+    //                     data: [28, 50, 36, 60, 38, 52, 38],
+    //                 },
+    //             ],
+    //             options: {
+    //                 chart: {
+    //                     height: 160,
+    //                     type: 'area',
+    //                     fontFamily: 'Nunito, sans-serif',
+    //                     sparkline: {
+    //                         enabled: true,
+    //                     },
+    //                 },
+    //                 stroke: {
+    //                     curve: 'smooth',
+    //                     width: 2,
+    //                 },
+    //                 colors: ['#1abc9c'],
+    //                 grid: {
+    //                     padding: {
+    //                         top: 5,
+    //                     },
+    //                 },
+    //                 yaxis: {
+    //                     show: false,
+    //                 },
+    //                 tooltip: {
+    //                     x: {
+    //                         show: false,
+    //                     },
+    //                     y: {
+    //                         title: {
+    //                             formatter: () => '',
+    //                         },
+    //                     },
+    //                 },
+    //             },
+    //         },
+    //     },
+    // };
 
     // uniqueVisitorSeriesOptions
     const uniqueVisitorSeries: any = {
@@ -819,31 +816,7 @@ const ComponentsDashboardAnalytics = () => {
             </div>
             <div className="panel mt-6">
               <h5 className="text-lg font-semibold mb-4">Bee Data Table</h5>
-              <input
-                type="text"
-                placeholder="Search..."
-                className="form-input mb-2"
-                value={search}
-                onChange={(e) => {
-                  setSearch(e.target.value);
-                  setPage(1);
-                }}
-              />
-              <DataTable
-                records={paginatedData.length > 0 ? paginatedData : []}
-                columns={beeColumns}
-                minHeight={200}
-                highlightOnHover
-                totalRecords={filteredData.length}
-                recordsPerPage={pageSize}
-                page={page}
-                onPageChange={setPage}
-                recordsPerPageOptions={PAGE_SIZES}
-                onRecordsPerPageChange={setPageSize}
-                paginationText={({ from, to, totalRecords }: { from: number; to: number; totalRecords: number }) =>
-                  `Showing ${from} to ${to} of ${totalRecords} entries`
-                }
-              />
+              <BeeDataTable />
             </div>
         </div>
     );
