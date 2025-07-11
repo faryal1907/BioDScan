@@ -1,16 +1,37 @@
 import React, { useEffect, useState } from 'react';
 import { DataTable } from 'mantine-datatable';
 
+// Define the structure of your data
+type BeeRecord = {
+    id: string;
+    Date: string;
+    Time: string;
+    'Bumble Bee': number;
+    'Honey Bee': number;
+    'Lady Bug': number;
+    'Total Count': number;
+    'Temperature (C)': number;
+    'Humidity (%)': number;
+    Location: string;
+};
+
 const PAGE_SIZES = [10, 20, 30, 50, 100];
 
 const BeeDataTable = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState([]);
-    const [recordsData, setRecordsData] = useState([]);
+    const [initialRecords, setInitialRecords] = useState<BeeRecord[]>([]);
+    const [recordsData, setRecordsData] = useState<BeeRecord[]>([]);
     const [search, setSearch] = useState('');
     const [filterField, setFilterField] = useState('id');
-    const [sortStatus, setSortStatus] = useState({ columnAccessor: 'Date', direction: 'desc' });
+    const [sortStatus, setSortStatus] = useState<{
+    columnAccessor: string;
+            direction: 'asc' | 'desc';
+        }>({
+            columnAccessor: 'Date',
+            direction: 'desc',
+        });
+
     const [loading, setLoading] = useState(true);
 
     // Fetch data from /api/external-bee-data
@@ -23,6 +44,7 @@ const BeeDataTable = () => {
                 const result = await response.json();
                 setInitialRecords(Array.isArray(result.data) ? result.data : []);
             } catch (error) {
+                console.error('Failed to load data:', error);
                 setInitialRecords([]);
             } finally {
                 setLoading(false);
@@ -45,25 +67,25 @@ const BeeDataTable = () => {
             const searchLower = search.toLowerCase();
             switch (filterField) {
                 case 'id':
-                    return item.id && String(item.id).toLowerCase().includes(searchLower);
+                    return item.id && item.id.toLowerCase().includes(searchLower);
                 case 'Date':
-                    return item.Date && String(item.Date).toLowerCase().includes(searchLower);
+                    return item.Date && item.Date.toLowerCase().includes(searchLower);
                 case 'Time':
-                    return item.Time && String(item.Time).toLowerCase().includes(searchLower);
+                    return item.Time && item.Time.toLowerCase().includes(searchLower);
                 case 'Bumble Bee':
-                    return item['Bumble Bee'] !== undefined && String(item['Bumble Bee']).includes(searchLower);
+                    return String(item['Bumble Bee']).includes(searchLower);
                 case 'Honey Bee':
-                    return item['Honey Bee'] !== undefined && String(item['Honey Bee']).includes(searchLower);
+                    return String(item['Honey Bee']).includes(searchLower);
                 case 'Lady Bug':
-                    return item['Lady Bug'] !== undefined && String(item['Lady Bug']).includes(searchLower);
+                    return String(item['Lady Bug']).includes(searchLower);
                 case 'Total Count':
-                    return item['Total Count'] !== undefined && String(item['Total Count']).includes(searchLower);
+                    return String(item['Total Count']).includes(searchLower);
                 case 'Temperature (C)':
-                    return item['Temperature (C)'] !== undefined && String(item['Temperature (C)']).includes(searchLower);
+                    return String(item['Temperature (C)']).includes(searchLower);
                 case 'Humidity (%)':
-                    return item['Humidity (%)'] !== undefined && String(item['Humidity (%)']).includes(searchLower);
+                    return String(item['Humidity (%)']).includes(searchLower);
                 case 'Location':
-                    return item.Location && String(item.Location).toLowerCase().includes(searchLower);
+                    return item.Location.toLowerCase().includes(searchLower);
                 default:
                     return true;
             }
@@ -114,16 +136,16 @@ const BeeDataTable = () => {
                             className="table-hover whitespace-nowrap"
                             records={recordsData}
                             columns={[
-                                { accessor: 'id', title: 'ID', sortable: true, render: (record) => record.id || 'N/A' },
-                                { accessor: 'Date', title: 'Date', sortable: true, render: (record) => record.Date || 'N/A' },
-                                { accessor: 'Time', title: 'Time', sortable: true, render: (record) => record.Time || 'N/A' },
-                                { accessor: 'Bumble Bee', title: 'Bumble Bee', sortable: true, render: (record) => record['Bumble Bee'] !== undefined ? record['Bumble Bee'] : 'N/A' },
-                                { accessor: 'Honey Bee', title: 'Honey Bee', sortable: true, render: (record) => record['Honey Bee'] !== undefined ? record['Honey Bee'] : 'N/A' },
-                                { accessor: 'Lady Bug', title: 'Lady Bug', sortable: true, render: (record) => record['Lady Bug'] !== undefined ? record['Lady Bug'] : 'N/A' },
-                                { accessor: 'Total Count', title: 'Total Count', sortable: true, render: (record) => record['Total Count'] !== undefined ? record['Total Count'] : 'N/A' },
-                                { accessor: 'Temperature (C)', title: 'Temperature (C)', sortable: true, render: (record) => record['Temperature (C)'] !== undefined ? record['Temperature (C)'] : 'N/A' },
-                                { accessor: 'Humidity (%)', title: 'Humidity (%)', sortable: true, render: (record) => record['Humidity (%)'] !== undefined ? record['Humidity (%)'] : 'N/A' },
-                                { accessor: 'Location', title: 'Location', sortable: true, render: (record) => record.Location || 'N/A' },
+                                { accessor: 'id', title: 'ID', sortable: true },
+                                { accessor: 'Date', title: 'Date', sortable: true },
+                                { accessor: 'Time', title: 'Time', sortable: true },
+                                { accessor: 'Bumble Bee', title: 'Bumble Bee', sortable: true },
+                                { accessor: 'Honey Bee', title: 'Honey Bee', sortable: true },
+                                { accessor: 'Lady Bug', title: 'Lady Bug', sortable: true },
+                                { accessor: 'Total Count', title: 'Total Count', sortable: true },
+                                { accessor: 'Temperature (C)', title: 'Temperature (C)', sortable: true },
+                                { accessor: 'Humidity (%)', title: 'Humidity (%)', sortable: true },
+                                { accessor: 'Location', title: 'Location', sortable: true },
                             ]}
                             totalRecords={initialRecords.length}
                             recordsPerPage={pageSize}
@@ -134,7 +156,9 @@ const BeeDataTable = () => {
                             sortStatus={sortStatus}
                             onSortStatusChange={setSortStatus}
                             minHeight={200}
-                            paginationText={({ from, to, totalRecords }) => `Showing ${from} to ${to} of ${totalRecords} entries`}
+                            paginationText={({ from, to, totalRecords }) =>
+                                `Showing ${from} to ${to} of ${totalRecords} entries`
+                            }
                         />
                     </div>
                 </>
