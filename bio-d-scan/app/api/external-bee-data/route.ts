@@ -4,14 +4,28 @@ const uri = process.env.MONGODB_URI || 'mongodb+srv://<username>:<password>@clus
 const dbName = 'bee_monitoring';
 const collectionName = 'bee_data';
 
-export async function GET() {
+export async function GET(req: Request) {
     let client;
     try {
+        // Parse pagination params
+        const { searchParams } = new URL(req.url);
+        const page = parseInt(searchParams.get('page') || '1', 10);
+        const pageSize = parseInt(searchParams.get('pageSize') || '20', 10);
+        const skip = (page - 1) * pageSize;
+
         client = new MongoClient(uri);
         await client.connect();
         const db = client.db(dbName);
         const collection = db.collection(collectionName);
-        const data = await collection.find({}).toArray();
+
+        // Get total count for pagination
+        const total = await collection.countDocuments();
+        // Get paginated data
+        const data = await collection.find({})
+            .sort({ timestamp: -1 })
+            .skip(skip)
+            .limit(pageSize)
+            .toArray();
 
         // Transform the data to match the frontend model structure
         const transformedData = data.map((item: any) => ({
@@ -30,7 +44,10 @@ export async function GET() {
         return new Response(JSON.stringify({
             message: 'Data fetched successfully',
             data: transformedData,
-            count: transformedData.length
+            count: transformedData.length,
+            total,
+            page,
+            pageSize
         }), {
             status: 200,
             headers: {

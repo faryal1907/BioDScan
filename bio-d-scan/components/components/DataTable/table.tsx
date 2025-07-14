@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { DataTable } from 'mantine-datatable';
 
 // Define the structure of your data
@@ -16,83 +16,78 @@ type BeeRecord = {
 };
 
 const PAGE_SIZES = [10, 20, 30, 50, 100];
+const POLL_INTERVAL = 5000; // 5 seconds
 
 const BeeDataTable = () => {
     const [page, setPage] = useState(1);
     const [pageSize, setPageSize] = useState(PAGE_SIZES[0]);
-    const [initialRecords, setInitialRecords] = useState<BeeRecord[]>([]);
     const [recordsData, setRecordsData] = useState<BeeRecord[]>([]);
+    const [totalRecords, setTotalRecords] = useState(0);
     const [search, setSearch] = useState('');
     const [filterField, setFilterField] = useState('id');
     const [sortStatus, setSortStatus] = useState<{
-    columnAccessor: string;
-            direction: 'asc' | 'desc';
-        }>({
-            columnAccessor: 'Date',
-            direction: 'desc',
-        });
-
+        columnAccessor: string;
+        direction: 'asc' | 'desc';
+    }>({
+        columnAccessor: 'Date',
+        direction: 'desc',
+    });
     const [loading, setLoading] = useState(true);
+    const isFirstLoad = useRef(true);
 
-    // Fetch data from /api/external-bee-data
-    useEffect(() => {
-        const loadData = async () => {
-            try {
-                setLoading(true);
-                const response = await fetch('/api/external-bee-data');
-                if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-                const result = await response.json();
-                setInitialRecords(Array.isArray(result.data) ? result.data : []);
-            } catch (error) {
-                console.error('Failed to load data:', error);
-                setInitialRecords([]);
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadData();
-    }, []);
+    // Fetch paginated data from /api/external-bee-data
+    const fetchData = useCallback(async (showLoading = false) => {
+        if (showLoading) setLoading(true);
+        try {
+            const response = await fetch(`/api/external-bee-data?page=${page}&pageSize=${pageSize}`);
+            if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+            const result = await response.json();
+            setRecordsData(Array.isArray(result.data) ? result.data : []);
+            setTotalRecords(result.total || 0);
+        } catch (error) {
+            console.error('Failed to load data:', error);
+            setRecordsData([]);
+            setTotalRecords(0);
+        } finally {
+            if (showLoading) setLoading(false);
+        }
+    }, [page, pageSize]);
 
-    // Pagination
     useEffect(() => {
-        const from = (page - 1) * pageSize;
-        const to = from + pageSize;
-        setRecordsData([...initialRecords.slice(from, to)]);
-    }, [page, pageSize, initialRecords]);
+        fetchData(true).then(() => { isFirstLoad.current = false; });
+        const interval = setInterval(() => fetchData(false), POLL_INTERVAL);
+        return () => clearInterval(interval);
+    }, [fetchData]);
 
-    // Search functionality
-    useEffect(() => {
-        const filteredData = initialRecords.filter((item) => {
-            if (!search) return true;
-            const searchLower = search.toLowerCase();
-            switch (filterField) {
-                case 'id':
-                    return item.id && item.id.toLowerCase().includes(searchLower);
-                case 'Date':
-                    return item.Date && item.Date.toLowerCase().includes(searchLower);
-                case 'Time':
-                    return item.Time && item.Time.toLowerCase().includes(searchLower);
-                case 'Bumble Bee':
-                    return String(item['Bumble Bee']).includes(searchLower);
-                case 'Honey Bee':
-                    return String(item['Honey Bee']).includes(searchLower);
-                case 'Lady Bug':
-                    return String(item['Lady Bug']).includes(searchLower);
-                case 'Total Count':
-                    return String(item['Total Count']).includes(searchLower);
-                case 'Temperature (C)':
-                    return String(item['Temperature (C)']).includes(searchLower);
-                case 'Humidity (%)':
-                    return String(item['Humidity (%)']).includes(searchLower);
-                case 'Location':
-                    return item.Location.toLowerCase().includes(searchLower);
-                default:
-                    return true;
-            }
-        });
-        setRecordsData([...filteredData.slice(0, pageSize)]);
-        setPage(1);
-    }, [search, pageSize, initialRecords, filterField]);
+    // Search functionality (client-side, on current page)
+    const filteredRecords = recordsData.filter((item) => {
+        if (!search) return true;
+        const searchLower = search.toLowerCase();
+        switch (filterField) {
+            case 'id':
+                return item.id && item.id.toLowerCase().includes(searchLower);
+            case 'Date':
+                return item.Date && item.Date.toLowerCase().includes(searchLower);
+            case 'Time':
+                return item.Time && item.Time.toLowerCase().includes(searchLower);
+            case 'Bumble Bee':
+                return String(item['Bumble Bee']).includes(searchLower);
+            case 'Honey Bee':
+                return String(item['Honey Bee']).includes(searchLower);
+            case 'Lady Bug':
+                return String(item['Lady Bug']).includes(searchLower);
+            case 'Total Count':
+                return String(item['Total Count']).includes(searchLower);
+            case 'Temperature (C)':
+                return String(item['Temperature (C)']).includes(searchLower);
+            case 'Humidity (%)':
+                return String(item['Humidity (%)']).includes(searchLower);
+            case 'Location':
+                return item.Location.toLowerCase().includes(searchLower);
+            default:
+                return true;
+        }
+    });
 
     return (
         <div className="panel mt-6">
@@ -134,7 +129,7 @@ const BeeDataTable = () => {
                         <DataTable
                             highlightOnHover
                             className="table-hover whitespace-nowrap"
-                            records={recordsData}
+                            records={filteredRecords}
                             columns={[
                                 { accessor: 'id', title: 'ID', sortable: true },
                                 { accessor: 'Date', title: 'Date', sortable: true },
@@ -147,7 +142,7 @@ const BeeDataTable = () => {
                                 { accessor: 'Humidity (%)', title: 'Humidity (%)', sortable: true },
                                 { accessor: 'Location', title: 'Location', sortable: true },
                             ]}
-                            totalRecords={initialRecords.length}
+                            totalRecords={totalRecords}
                             recordsPerPage={pageSize}
                             page={page}
                             onPageChange={setPage}
