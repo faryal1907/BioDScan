@@ -34,6 +34,7 @@ const BeeDataTable = () => {
     });
     const [loading, setLoading] = useState(true);
     const isFirstLoad = useRef(true);
+    const [pageInput, setPageInput] = useState('1');
 
     // Fetch paginated data from /api/external-bee-data
     const fetchData = useCallback(async (showLoading = false) => {
@@ -43,11 +44,19 @@ const BeeDataTable = () => {
             if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
             const result = await response.json();
             setRecordsData(Array.isArray(result.data) ? result.data : []);
-            setTotalRecords(result.total || 0);
+            // Only update totalRecords if result.total is a valid number
+            if (typeof result.total === 'number' && !isNaN(result.total)) {
+                setTotalRecords(result.total);
+            }
+            // If the current page is out of range, clamp to last page
+            const maxPage = Math.max(1, Math.ceil((result.total || 0) / pageSize));
+            if (page > maxPage) {
+                setPage(maxPage);
+            }
         } catch (error) {
             console.error('Failed to load data:', error);
             setRecordsData([]);
-            setTotalRecords(0);
+            // Do not reset totalRecords to 0 on error
         } finally {
             if (showLoading) setLoading(false);
         }
@@ -58,6 +67,10 @@ const BeeDataTable = () => {
         const interval = setInterval(() => fetchData(false), POLL_INTERVAL);
         return () => clearInterval(interval);
     }, [fetchData]);
+
+    useEffect(() => {
+        setPageInput(page.toString()); // Keep input in sync with current page
+    }, [page]);
 
     // Search functionality (client-side, on current page)
     const filteredRecords = recordsData.filter((item) => {
@@ -90,7 +103,7 @@ const BeeDataTable = () => {
     });
 
     return (
-        <div className="panel mt-6">
+        <>
             {loading ? (
                 <div className="flex h-64 items-center justify-center">
                     <span>Loading...</span>
@@ -98,7 +111,6 @@ const BeeDataTable = () => {
             ) : (
                 <>
                     <div className="mb-5 flex flex-col gap-5 md:flex-row md:items-center">
-                        <h5 className="text-lg font-semibold dark:text-white-light">Bee Data Table</h5>
                         <div className="ltr:ml-auto rtl:mr-auto flex gap-2 items-center">
                             <select
                                 value={filterField}
@@ -123,6 +135,39 @@ const BeeDataTable = () => {
                                 value={search}
                                 onChange={(e) => setSearch(e.target.value)}
                             />
+                            {/* Page number input */}
+                            <form
+                                onSubmit={e => {
+                                    e.preventDefault();
+                                    const num = parseInt(pageInput, 10);
+                                    const maxPage = Math.max(1, Math.ceil(totalRecords / pageSize));
+                                    if (!isNaN(num) && num >= 1 && num <= maxPage) {
+                                        setPage(num);
+                                    } else {
+                                        setPageInput(page.toString()); // Reset to current page if invalid
+                                    }
+                                }}
+                                className="flex items-center gap-1"
+                                style={{ marginLeft: 8 }}
+                            >
+                                <input
+                                    type="number"
+                                    min={1}
+                                    max={Math.max(1, Math.ceil(totalRecords / pageSize))}
+                                    value={pageInput}
+                                    onChange={e => setPageInput(e.target.value)}
+                                    className="form-input w-20 text-center"
+                                    style={{ width: 80, paddingLeft: 4, paddingRight: 4 }}
+                                    title="Go to page"
+                                />
+                                <span>/ {Math.max(1, Math.ceil(totalRecords / pageSize))}</span>
+                                <button
+                                    type="submit"
+                                    className="btn btn-primary btn-sm"
+                                    style={{ padding: '0 8px' }}
+                                    title="Go to page"
+                                >Go</button>
+                            </form>
                         </div>
                     </div>
                     <div className="datatables">
@@ -158,7 +203,7 @@ const BeeDataTable = () => {
                     </div>
                 </>
             )}
-        </div>
+        </>
     );
 };
 

@@ -22,7 +22,7 @@ export async function GET(req: Request) {
         const total = await collection.countDocuments();
         // Get paginated data
         const data = await collection.find({})
-            .sort({ timestamp: -1 })
+            .sort({ Date: -1, Time: -1 })
             .skip(skip)
             .limit(pageSize)
             .toArray();
