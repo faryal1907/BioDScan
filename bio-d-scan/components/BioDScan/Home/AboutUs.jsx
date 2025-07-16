@@ -2,7 +2,7 @@ import React from 'react';
 
 const AboutUsSection = () => {
     return (
-        <section className="container mx-auto px-4 py-12">
+        <section className="w-full px-4 py-12">
             {/* Top content (heading, subheading, button) */}
             <div className="mt-[50px] md:mt-0 flex flex-col md:flex-row items-start md:items-center mb-10">
                 {/* Left Text Content */}

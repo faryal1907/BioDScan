@@ -146,10 +146,10 @@ const Header = () => {
     const [search, setSearch] = useState(false);
 
     return (
-        <header className={`z-40 ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
-            <div className="shadow-sm">
-                <div className="relative flex w-full items-center bg-white px-5 py-2.5 dark:bg-black">
-                    <div className="horizontal-logo flex items-center justify-between ltr:mr-2 rtl:ml-2 lg:hidden">
+        <header className={`z-40 w-full ${themeConfig.semidark && themeConfig.menu === 'horizontal' ? 'dark' : ''}`}>
+            <div className="shadow-sm w-full">
+                <div className="relative flex w-full items-center justify-between bg-white px-5 py-2.5 dark:bg-black">
+                    <div className="horizontal-logo flex items-center justify-between lg:hidden">
                         <Link href="/" className="main-logo flex shrink-0 items-center">
                             <img className="inline w-8 ltr:-ml-1 rtl:-mr-1" src="/assets/images/logo.svg" alt="logo" />
                             <span className="hidden align-middle text-2xl  font-semibold  transition-all duration-300 ltr:ml-1.5 rtl:mr-1.5 dark:text-white-light md:inline">VRISTO</span>
@@ -163,7 +163,7 @@ const Header = () => {
                         </button>
                     </div>
 
-                    <div className="hidden ltr:mr-2 rtl:ml-2 sm:block">
+                    <div className="hidden sm:block">
                         <ul className="flex items-center space-x-2 rtl:space-x-reverse dark:text-[#d0d2d6]">
                             <li>
                                 <Link href="/apps/calendar" className="block rounded-full bg-white-light/40 p-2 hover:bg-white-light/90 hover:text-primary dark:bg-dark/40 dark:hover:bg-dark/60">
@@ -182,7 +182,7 @@ const Header = () => {
                             </li>
                         </ul>
                     </div>
-                    <div className="flex items-center space-x-1.5 ltr:ml-auto rtl:mr-auto rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 ltr:sm:ml-0 sm:rtl:mr-0 lg:space-x-2">
+                    <div className="flex items-center space-x-1.5 rtl:space-x-reverse dark:text-[#d0d2d6] sm:flex-1 lg:space-x-2">
                         <div className="sm:ltr:mr-auto sm:rtl:ml-auto">
                             <form
                                 className={`${search && '!block'} absolute inset-x-0 top-1/2 z-10 mx-4 hidden -translate-y-1/2 sm:relative sm:top-0 sm:mx-0 sm:block sm:translate-y-0`}

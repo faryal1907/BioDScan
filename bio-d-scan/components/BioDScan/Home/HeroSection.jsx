@@ -17,7 +17,7 @@ const Hero = () => {
             <div className="absolute inset-0 bg-black opacity-50 z-0"></div>
 
             {/* Content positioned above the overlay */}
-            <div className="relative container mx-auto px-4 pt-32 pb-12 md:pt-40 md:pb-24 flex flex-col md:flex-row items-start z-10">
+            <div className="relative w-full px-4 pt-32 pb-12 md:pt-40 md:pb-24 flex flex-col md:flex-row items-start z-10">
                 {/* Left Text Content */}
                 <div className="w-full md:w-1/2 md:pr-8">
                     <h1 className="text-4xl md:text-5xl font-bold mb-4 text-white">Welcome to Bio D Scan</h1>
@@ -32,7 +32,7 @@ const Hero = () => {
                 </div>
             </div>
 
-            <div className="my-[50px] md:my-0 relative container mx-auto px-4 py-12 flex flex-row flex-nowrap overflow-x-auto justify-start gap-4 z-10">
+            <div className="my-[50px] md:my-0 relative w-full px-4 py-12 flex flex-row flex-nowrap overflow-x-auto justify-start gap-4 z-10">
                 <div className="w-1/2 min-w-[220px] lg:w-1/4 bg-white bg-opacity-30 backdrop-blur-lg p-3 lg:p-6 rounded-md">
                     <div className="flex items-center space-x-2 lg:space-x-4">
                         <div className="text-yellow-500 text-2xl lg:text-4xl">
